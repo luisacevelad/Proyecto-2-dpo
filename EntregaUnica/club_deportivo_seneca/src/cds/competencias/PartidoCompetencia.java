@@ -33,7 +33,7 @@ public class PartidoCompetencia extends Partido{
 	@Override
 	protected void validarParticipante(Socio s) throws ReglaNegocioException {
 		if (!nomina.estaHabilitado(s)) {
-			throw new ReglaNegocioException(s.getNombre() + " no esta en la nomina habilitada para esta competencia");
+			throw new ReglaNegocioException(s.getNombre() + " no esta habilitado para el torneo: no fue registrado en la nomina de esta competencia");
 		}
 		if(!s.estaHabilitado()) {
 			throw new ReglaNegocioException(s.getNombre() + " no esta habilitado para jugar");

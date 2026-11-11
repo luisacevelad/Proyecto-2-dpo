@@ -2,8 +2,11 @@ package cds.conjunto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import cds.usuarios.RestriccionMedica;
 import cds.usuarios.Socio;
 import cds.ReglaNegocioException;
 import cds.partidos.Suspension;
@@ -45,7 +48,7 @@ public class Equipo {
 
 		for (MiembroEquipo m : miembros) {
 			if (m.getNumeroCamiseta() == numero) {
-				throw new ReglaNegocioException("El numero " + numero + " ya esta tomado en " + nombre);
+				throw new ReglaNegocioException("El dorsal " + numero + " ya esta asignado en " + nombre + "; elija un dorsal libre");
 			}
 		}
 
@@ -87,6 +90,38 @@ public class Equipo {
 			}
 		}
 		return habilitados;
+	}
+
+	public boolean puedeDisputarPartido() {
+		return contarHabilitados() >= deporte.getMinJugadores();
+	}
+
+	public Map<Socio, String> jugadoresNoDisponibles() {
+		Map<Socio, String> noDisponibles = new LinkedHashMap<Socio, String>();
+		for (MiembroEquipo m : miembros) {
+			String motivo = motivoNoDisponible(m.getSocio());
+			if (motivo != null) {
+				noDisponibles.put(m.getSocio(), motivo);
+			}
+		}
+		return noDisponibles;
+	}
+
+	private String motivoNoDisponible(Socio s) {
+		if (!s.isActivo()) {
+			return "inactivo en el club";
+		}
+		for (Suspension susp : suspensiones) {
+			if (susp.getSocio() == s && !susp.isCumplida()) {
+				return "suspendido por " + susp.getMotivo();
+			}
+		}
+		for (RestriccionMedica r : s.getRestricciones()) {
+			if (r.estaVigente()) {
+				return "restriccion medica: " + r.getMotivo();
+			}
+		}
+		return null;
 	}
 
 	public void agregarSuspension(Suspension s) {

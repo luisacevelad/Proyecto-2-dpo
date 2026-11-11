@@ -36,6 +36,7 @@ import cds.catalogo.Inventario;
 import cds.catalogo.ProductoCafeteria;
 import cds.catalogo.Snack;
 import cds.catalogo.Sugerencia;
+import cds.catalogo.TipoSugerencia;
 import cds.catalogo.Ubicacion;
 import cds.catalogo.Vendible;
 import cds.competencias.Competencia;
@@ -589,6 +590,15 @@ public class ArchivoClub {
 			registro.put("descripcion", sugerencia.getDescripcion());
 			registro.put("fecha", sugerencia.getFecha().toString());
 			registro.put("estado", sugerencia.getEstado().name());
+			registro.put("tipo", sugerencia.getTipo().name());
+			registro.put("precio", sugerencia.getPrecio());
+			if (sugerencia.tieneAlergenosDeclarados()) {
+				List<Object> alergenosSugeridos = Json.arreglo();
+				for (Alergeno alergeno : sugerencia.getAlergenos()) {
+					alergenosSugeridos.add(alergeno.name());
+				}
+				registro.put("alergenos", alergenosSugeridos);
+			}
 			sugerencias.add(registro);
 		}
 		resultado.put("sugerencias", sugerencias);
@@ -994,8 +1004,18 @@ public class ArchivoClub {
 		}
 		for (Object dato : arreglo(datos, "sugerencias")) {
 			Map<String, Object> item = Json.comoObjeto(dato);
+			TipoSugerencia tipoSugerencia = item.containsKey("tipo") ? TipoSugerencia.valueOf(texto(item, "tipo"))
+					: TipoSugerencia.ARTICULO;
+			double precioSugerido = item.containsKey("precio") ? decimal(item, "precio") : 0;
 			Sugerencia sugerencia = new Sugerencia(empleado(club, texto(item, "autor")), texto(item, "descripcion"),
-					LocalDate.parse(texto(item, "fecha")));
+					LocalDate.parse(texto(item, "fecha")), tipoSugerencia, precioSugerido);
+			if (item.containsKey("alergenos")) {
+				List<Alergeno> declarados = new ArrayList<Alergeno>();
+				for (Object alergeno : arreglo(item, "alergenos")) {
+					declarados.add(Alergeno.valueOf(texto(alergeno)));
+				}
+				sugerencia.declararAlergenos(declarados);
+			}
 			EstadoSugerencia estado = EstadoSugerencia.valueOf(texto(item, "estado"));
 			if (estado == EstadoSugerencia.APROBADA) {
 				sugerencia.aprobar();

@@ -35,6 +35,21 @@ public abstract class Partido {
 		participantes.add(s);
 	}
 
+	public void confirmarAlineacion(List<Socio> alineacion) throws ReglaNegocioException {
+		if (isJugado()) {
+			throw new ReglaNegocioException("El partido ya se jugo");
+		}
+		List<Socio> revisados = new ArrayList<Socio>();
+		for (Socio s : alineacion) {
+			if (participantes.contains(s) || revisados.contains(s)) {
+				throw new ReglaNegocioException(s.getNombre() + " ya esta en el partido");
+			}
+			validarParticipante(s);
+			revisados.add(s);
+		}
+		participantes.addAll(revisados);
+	}
+
 	public void registrarEstadistica(EstadisticaIndividual e) throws ReglaNegocioException {
 		if (jugado) {
 			throw new ReglaNegocioException("El partido ya se jugo");

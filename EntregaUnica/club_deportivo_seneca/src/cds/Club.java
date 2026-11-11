@@ -281,7 +281,8 @@ public class Club {
 	public void inscribirJugador(Equipo e, Socio s, String posicion, int numero, LocalDate hoy) throws ReglaNegocioException {
 		Equipo actual = buscarEquipoDe(s, e.getDeporte());
 		if (actual != null) {
-			throw new ReglaNegocioException(s.getNombre() + " ya juega " + e.getDeporte().getNombre() + " en " + actual.getNombre());
+			throw new ReglaNegocioException(s.getNombre() + " ya juega " + e.getDeporte().getNombre() + " en " + actual.getNombre()
+					+ "; solo puede pertenecer a un unico equipo por disciplina");
 		}
 		e.agregarJugador(s, posicion, numero, hoy);
 	}

@@ -5,10 +5,13 @@ import java.util.List;
 
 import cds.ReglaNegocioException;
 import cds.academias.Instalacion;
+import cds.catalogo.Alergeno;
 import cds.catalogo.Articulo;
 import cds.catalogo.Inventario;
 import cds.catalogo.ProductoCafeteria;
+import cds.catalogo.Snack;
 import cds.catalogo.Sugerencia;
+import cds.catalogo.TipoSugerencia;
 import cds.catalogo.Ubicacion;
 
 public class TiendaCafeteria {
@@ -65,6 +68,28 @@ public class TiendaCafeteria {
 		sugerencias.add(s);
 	}
 
+	public void aprobarSugerencia(Sugerencia s) throws ReglaNegocioException {
+		boolean esSnack = s.getTipo() == TipoSugerencia.SNACK;
+		boolean yaExiste = esSnack ? buscarProducto(s.getDescripcion()) != null : buscarArticulo(s.getDescripcion()) != null;
+		if (yaExiste) {
+			throw new ReglaNegocioException("Ya existe " + s.getDescripcion() + " en el catalogo");
+		}
+		s.aprobar();
+		if (esSnack) {
+			Snack snack = new Snack(s.getDescripcion(), s.getPrecio());
+			for (Alergeno a : s.getAlergenos()) {
+				snack.agregarAlergeno(a);
+			}
+			registrarProducto(snack);
+		} else {
+			registrarArticulo(new Articulo(s.getDescripcion(), "Sugerido", s.getPrecio()));
+		}
+	}
+
+	public void rechazarSugerencia(Sugerencia s) throws ReglaNegocioException {
+		s.rechazar();
+	}
+
 	public void registrarVenta(Venta v) throws ReglaNegocioException {
 		if (!v.isConfirmada()) {
 			throw new ReglaNegocioException("Solo se registran ventas confirmadas");
@@ -98,8 +123,7 @@ public class TiendaCafeteria {
 	}
 
 
-	public void trasladar(Articulo articulo, Ubicacion origen, Ubicacion destino, int unidades)
-			throws ReglaNegocioException {
+	public void trasladar(Articulo articulo, Ubicacion origen, Ubicacion destino) throws ReglaNegocioException {
 		if (origen == destino) {
 			throw new ReglaNegocioException("El origen y el destino son la misma ubicacion");
 		}
@@ -107,16 +131,12 @@ public class TiendaCafeteria {
 		if (desde == null) {
 			throw new ReglaNegocioException("No hay " + articulo.getNombre() + " en " + origen.getNombre());
 		}
-		desde.retirar(unidades);
-
-		Inventario hacia = buscarInventario(articulo, destino);
-		if (hacia == null) {
-			hacia = new Inventario(articulo, destino, 0);
-			registrarInventario(hacia);
+		if (buscarInventario(articulo, destino) != null) {
+			throw new ReglaNegocioException(articulo.getNombre() + " ya se vende en " + destino.getNombre());
 		}
-		hacia.agregar(unidades);
+		inventarios.remove(desde);
+		inventarios.add(new Inventario(articulo, destino, desde.getCantidad()));
 	}
-
 
 	public Ubicacion buscarUbicacion(String nombre) {
 		for (Ubicacion u : ubicaciones) {

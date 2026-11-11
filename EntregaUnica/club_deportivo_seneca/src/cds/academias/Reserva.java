@@ -20,6 +20,9 @@ public class Reserva {
 		if (socio.tieneBebidaCaliente() && instalacion.restringeBebidaCaliente()) {
 			throw new ReglaNegocioException("No se puede usar " + instalacion.getNombre() + " con una bebida caliente");
 		}
+		if (instalacion.getTipo() == TipoInstalacion.CANCHA_PADEL && (modalidad != Modalidad.DOBLES || numJugadores != 4)) {
+			throw new ReglaNegocioException("El padel siempre se juega en modalidad de dobles (4 jugadores en total)");
+		}
 		int capacidad = instalacion.capacidadMaxima(modalidad);
 		if(numJugadores < 1 || numJugadores > capacidad) {
 			throw new ReglaNegocioException("La instalacion " + instalacion.getNombre() + " adminte hasta " + capacidad + " jugadores en modalidad " + modalidad);

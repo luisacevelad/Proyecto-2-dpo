@@ -15,3 +15,7 @@ Eclipse IDE.
 3. Seleccione Run As > Java Application.
 4. Use Entrega_2 como directorio de trabajo para encontrar datos/club.json
 5. La salida se guarda endatos/salida_club/club.json.
+
+## Pruebas
+Las pruebas JUnit 5 estan en la carpeta `test`.
+test/cds/historias tiene una clase por historia de usuario del banco oficial algunas clases tienen nested que prueban por criterio de aceptacion

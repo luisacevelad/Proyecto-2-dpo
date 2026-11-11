@@ -62,7 +62,7 @@ public class Academia {
 			}
 		}
 		if(instalacionesEnUso.size() >= maxInstalacionesSimultaneas) {
-			throw new ReglaNegocioException("No hay cupo: " + nombre + " ya tiene " + maxInstalacionesSimultaneas + " instalaciones en uso en ese horario");
+			throw new ReglaNegocioException(nombre + ": no hay disponibilidad, ya hay " + maxInstalacionesSimultaneas + " instalaciones en uso en ese horario");
 			
 		}
 		
