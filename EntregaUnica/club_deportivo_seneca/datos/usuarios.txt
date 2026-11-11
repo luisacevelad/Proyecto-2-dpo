@@ -1,0 +1,13 @@
+ADMINISTRADOR;admin;admin123;Administrador Club
+ENTRENADOR;leo;leo123;Leonardo Diaz;LEO-CDS
+ENTRENADOR;sara;sara123;Sara Mejia;SAR-CDS
+ENTRENADOR;max;max123;Maximo Vela;MAX-CDS
+FISIOTERAPEUTA;paula;paula123;Paula Rojas;PAU-CDS
+SOCIO;ana;ana123;Ana Gomez;1010;2001-03-14
+SOCIO;carlos;carlos123;Carlos Ruiz;2020;1998-07-02
+SOCIO;beto;beto123;Beto Salas;3030;1999-08-01
+SOCIO;diana;diana123;Diana Perez;4040;2000-11-23
+SOCIO;eva;eva123;Eva Torres;5050;2002-06-30
+SOCIO;felipe;felipe123;Felipe Castro;6060;1997-02-05
+SOCIO;gabriel;gabriel123;Gabriel Rios;7070;1996-09-12
+SOCIO;hugo;hugo123;Hugo Mora;8080;1995-01-20

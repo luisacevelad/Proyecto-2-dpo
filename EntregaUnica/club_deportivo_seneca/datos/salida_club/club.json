@@ -1,0 +1,838 @@
+{
+  "version": 1,
+  "usuarios": [
+    {
+      "login": "admin",
+      "password": "admin123",
+      "nombre": "Administrador Club",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "ADMINISTRADOR"
+    },
+    {
+      "login": "leo",
+      "password": "leo123",
+      "nombre": "Leonardo Diaz",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "ENTRENADOR",
+      "codigoDescuento": "LEO-CDS"
+    },
+    {
+      "login": "sara",
+      "password": "sara123",
+      "nombre": "Sara Mejia",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "ENTRENADOR",
+      "codigoDescuento": "SAR-CDS"
+    },
+    {
+      "login": "max",
+      "password": "max123",
+      "nombre": "Maximo Vela",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "ENTRENADOR",
+      "codigoDescuento": "MAX-CDS"
+    },
+    {
+      "login": "paula",
+      "password": "paula123",
+      "nombre": "Paula Rojas",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "FISIOTERAPEUTA",
+      "codigoDescuento": "PAU-CDS"
+    },
+    {
+      "login": "ana",
+      "password": "ana123",
+      "nombre": "Ana Gomez",
+      "puntosFidelidad": 4548,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "1010",
+      "fechaNacimiento": "2001-03-14",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "carlos",
+      "password": "carlos123",
+      "nombre": "Carlos Ruiz",
+      "puntosFidelidad": 259,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "2020",
+      "fechaNacimiento": "1998-07-02",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "beto",
+      "password": "beto123",
+      "nombre": "Beto Salas",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "3030",
+      "fechaNacimiento": "1999-08-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "diana",
+      "password": "diana123",
+      "nombre": "Diana Perez",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "4040",
+      "fechaNacimiento": "2000-11-23",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "eva",
+      "password": "eva123",
+      "nombre": "Eva Torres",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "5050",
+      "fechaNacimiento": "2002-06-30",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "felipe",
+      "password": "felipe123",
+      "nombre": "Felipe Castro",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "6060",
+      "fechaNacimiento": "1997-02-05",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "gabriel",
+      "password": "gabriel123",
+      "nombre": "Gabriel Rios",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "7070",
+      "fechaNacimiento": "1996-09-12",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "hugo",
+      "password": "hugo123",
+      "nombre": "Hugo Mora",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "8080",
+      "fechaNacimiento": "1995-01-20",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecarojo5",
+      "password": "clave",
+      "nombre": "Jugador 5",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAROJO5",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecarojo6",
+      "password": "clave",
+      "nombre": "Jugador 6",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAROJO6",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecarojo7",
+      "password": "clave",
+      "nombre": "Jugador 7",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAROJO7",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecarojo8",
+      "password": "clave",
+      "nombre": "Jugador 8",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAROJO8",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecaazul4",
+      "password": "clave",
+      "nombre": "Jugador 4",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAAZUL4",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecaazul5",
+      "password": "clave",
+      "nombre": "Jugador 5",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAAZUL5",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecaazul6",
+      "password": "clave",
+      "nombre": "Jugador 6",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAAZUL6",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    },
+    {
+      "login": "senecaazul7",
+      "password": "clave",
+      "nombre": "Jugador 7",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "SOCIO",
+      "documento": "SENECAAZUL7",
+      "fechaNacimiento": "2000-01-01",
+      "activo": true,
+      "entrenador": false,
+      "restricciones": []
+    }
+  ],
+  "equipos": [
+    {
+      "nombre": "Seneca Rojo",
+      "deporte": "FUTBOL",
+      "categoria": "MAYORES",
+      "cupoMaximo": 8,
+      "activo": true,
+      "miembros": [
+        {
+          "socio": "ana",
+          "posicion": "Portero",
+          "numeroCamiseta": 1,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "carlos",
+          "posicion": "Campo",
+          "numeroCamiseta": 2,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "beto",
+          "posicion": "Campo",
+          "numeroCamiseta": 3,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "diana",
+          "posicion": "Campo",
+          "numeroCamiseta": 4,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "senecarojo5",
+          "posicion": "Campo",
+          "numeroCamiseta": 5,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecarojo6",
+          "posicion": "Campo",
+          "numeroCamiseta": 6,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecarojo7",
+          "posicion": "Campo",
+          "numeroCamiseta": 7,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecarojo8",
+          "posicion": "Campo",
+          "numeroCamiseta": 8,
+          "fechaIngreso": "2026-10-18"
+        }
+      ],
+      "suspensiones": [
+        {
+          "socio": "ana",
+          "motivo": "2 amarillas",
+          "origen": 0,
+          "cumplida": true
+        }
+      ]
+    },
+    {
+      "nombre": "Seneca Azul",
+      "deporte": "FUTBOL",
+      "categoria": "MAYORES",
+      "cupoMaximo": 10,
+      "activo": true,
+      "miembros": [
+        {
+          "socio": "eva",
+          "posicion": "Portero",
+          "numeroCamiseta": 1,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "felipe",
+          "posicion": "Campo",
+          "numeroCamiseta": 2,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "gabriel",
+          "posicion": "Campo",
+          "numeroCamiseta": 3,
+          "fechaIngreso": "2026-10-01"
+        },
+        {
+          "socio": "senecaazul4",
+          "posicion": "Campo",
+          "numeroCamiseta": 4,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecaazul5",
+          "posicion": "Campo",
+          "numeroCamiseta": 5,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecaazul6",
+          "posicion": "Campo",
+          "numeroCamiseta": 6,
+          "fechaIngreso": "2026-10-18"
+        },
+        {
+          "socio": "senecaazul7",
+          "posicion": "Campo",
+          "numeroCamiseta": 7,
+          "fechaIngreso": "2026-10-18"
+        }
+      ],
+      "suspensiones": []
+    }
+  ],
+  "instalaciones": [
+    {
+      "nombre": "Cancha demostracion",
+      "tipo": "CANCHA_TENIS",
+      "techada": false
+    },
+    {
+      "nombre": "Cancha padel demostracion",
+      "tipo": "CANCHA_PADEL",
+      "techada": false
+    }
+  ],
+  "academias": [
+    {
+      "nombre": "Academia de Tenis",
+      "disciplina": "TENIS",
+      "maxInstalacionesSimultaneas": 2,
+      "inscripciones": [
+        {
+          "socio": "ana",
+          "nivel": "PRINCIPIANTE",
+          "fecha": "2026-10-01",
+          "puntajeRanking": 1000.0,
+          "historial": []
+        },
+        {
+          "socio": "beto",
+          "nivel": "INTERMEDIO",
+          "fecha": "2026-10-01",
+          "puntajeRanking": 1016.0,
+          "historial": [
+            {
+              "fecha": "2026-10-18",
+              "puntaje": 1016.0
+            }
+          ]
+        },
+        {
+          "socio": "hugo",
+          "nivel": "AVANZADO",
+          "fecha": "2026-10-02",
+          "puntajeRanking": 1000.0,
+          "historial": []
+        },
+        {
+          "socio": "carlos",
+          "nivel": "INTERMEDIO",
+          "fecha": "2026-10-18",
+          "puntajeRanking": 1016.0,
+          "historial": [
+            {
+              "fecha": "2026-10-18",
+              "puntaje": 1016.0
+            }
+          ]
+        },
+        {
+          "socio": "diana",
+          "nivel": "INTERMEDIO",
+          "fecha": "2026-10-18",
+          "puntajeRanking": 984.0,
+          "historial": [
+            {
+              "fecha": "2026-10-18",
+              "puntaje": 984.0
+            }
+          ]
+        },
+        {
+          "socio": "eva",
+          "nivel": "INTERMEDIO",
+          "fecha": "2026-10-18",
+          "puntajeRanking": 984.0,
+          "historial": [
+            {
+              "fecha": "2026-10-18",
+              "puntaje": 984.0
+            }
+          ]
+        }
+      ],
+      "instalaciones": [
+        0
+      ],
+      "reservas": [
+        {
+          "instalacion": 0,
+          "socio": "ana",
+          "fecha": "2026-10-18",
+          "horaInicio": "08:00",
+          "horaFin": "09:00",
+          "numJugadores": 2,
+          "modalidad": "SENCILLOS"
+        }
+      ]
+    },
+    {
+      "nombre": "Academia de Padel",
+      "disciplina": "PADEL",
+      "maxInstalacionesSimultaneas": 1,
+      "inscripciones": [
+        {
+          "socio": "carlos",
+          "nivel": "INTERMEDIO",
+          "fecha": "2026-10-18",
+          "puntajeRanking": 1000.0,
+          "historial": []
+        }
+      ],
+      "instalaciones": [
+        1
+      ],
+      "reservas": [
+        {
+          "instalacion": 1,
+          "socio": "carlos",
+          "fecha": "2026-10-18",
+          "horaInicio": "11:00",
+          "horaFin": "12:00",
+          "numJugadores": 4,
+          "modalidad": "DOBLES"
+        }
+      ]
+    }
+  ],
+  "competencias": [
+    {
+      "tipo": "LIGA",
+      "nombre": "Liga Universitaria 2026",
+      "organizador": "ASCUN",
+      "temporada": 2026,
+      "deporte": "FUTBOL",
+      "categoria": "MAYORES",
+      "nominaMinima": 7,
+      "puntosVictoria": 3,
+      "puntosEmpate": 1,
+      "tabla": [
+        {
+          "equipo": "Seneca Rojo",
+          "puntos": 3
+        }
+      ],
+      "nominas": [
+        {
+          "id": 0,
+          "equipo": "Seneca Rojo",
+          "fechaInscripcion": "2026-10-18",
+          "inscritos": [
+            "ana",
+            "carlos",
+            "beto",
+            "diana",
+            "senecarojo5",
+            "senecarojo6",
+            "senecarojo7",
+            "senecarojo8"
+          ]
+        }
+      ]
+    }
+  ],
+  "partidos": [
+    {
+      "id": 0,
+      "tipo": "INTERNO",
+      "fecha": "2026-10-18",
+      "marcadorLocal": 2,
+      "marcadorVisitante": 1,
+      "jugado": true,
+      "registradoEnClub": true,
+      "participantes": [
+        "ana",
+        "eva",
+        "carlos",
+        "felipe",
+        "beto",
+        "gabriel",
+        "diana",
+        "senecaazul4",
+        "senecarojo5",
+        "senecaazul5",
+        "senecarojo6",
+        "senecaazul6",
+        "senecarojo7",
+        "senecaazul7"
+      ],
+      "estadisticas": [
+        {
+          "jugador": "ana",
+          "tipo": "FUTBOL",
+          "goles": 1,
+          "asistencias": 0,
+          "amarillas": 2,
+          "rojas": 0
+        }
+      ],
+      "local": "Seneca Rojo",
+      "visitante": "Seneca Azul"
+    },
+    {
+      "id": 1,
+      "tipo": "PRACTICA",
+      "fecha": "2026-10-18",
+      "marcadorLocal": 2,
+      "marcadorVisitante": 0,
+      "jugado": true,
+      "registradoEnClub": true,
+      "participantes": [
+        "beto",
+        "carlos",
+        "diana",
+        "eva"
+      ],
+      "estadisticas": [],
+      "academia": "Academia de Tenis",
+      "modalidad": "DOBLES"
+    },
+    {
+      "id": 2,
+      "tipo": "COMPETENCIA",
+      "fecha": "2026-10-25",
+      "marcadorLocal": 2,
+      "marcadorVisitante": 0,
+      "jugado": true,
+      "registradoEnClub": false,
+      "participantes": [
+        "carlos",
+        "beto",
+        "diana",
+        "senecarojo5",
+        "senecarojo6",
+        "senecarojo7",
+        "senecarojo8"
+      ],
+      "estadisticas": [],
+      "nomina": 0,
+      "rival": "Universidad Norte",
+      "escenario": "Cancha central",
+      "deporte": "FUTBOL",
+      "fase": -1
+    }
+  ],
+  "sesiones": [
+    {
+      "fecha": "2026-10-18",
+      "hora": "10:00",
+      "duracionMinutos": 60,
+      "finalizada": true,
+      "responsable": "leo",
+      "instalacion": 0,
+      "equipo": null,
+      "academia": "Academia de Tenis",
+      "convocados": [
+        {
+          "socio": "ana",
+          "estado": "ASISTIO",
+          "evaluacion": {
+            "nota": 5,
+            "comentario": "Buen saque"
+          }
+        }
+      ]
+    }
+  ],
+  "tienda": {
+    "ubicaciones": [
+      {
+        "nombre": "Bodega"
+      },
+      {
+        "nombre": "Tienda"
+      }
+    ],
+    "articulos": [
+      {
+        "nombre": "Balon de futbol",
+        "categoria": "Balones",
+        "precio": 120000.0
+      },
+      {
+        "nombre": "Camiseta del club",
+        "categoria": "Ropa",
+        "precio": 85000.0
+      },
+      {
+        "nombre": "Raqueta de tenis",
+        "categoria": "Raquetas",
+        "precio": 240000.0
+      }
+    ],
+    "inventarios": [
+      {
+        "articulo": "Balon de futbol",
+        "ubicacion": "Bodega",
+        "cantidad": 40
+      },
+      {
+        "articulo": "Balon de futbol",
+        "ubicacion": "Tienda",
+        "cantidad": 11
+      },
+      {
+        "articulo": "Camiseta del club",
+        "ubicacion": "Tienda",
+        "cantidad": 29
+      },
+      {
+        "articulo": "Raqueta de tenis",
+        "ubicacion": "Bodega",
+        "cantidad": 8
+      }
+    ],
+    "productos": [
+      {
+        "tipo": "BEBIDA",
+        "nombre": "Tinto",
+        "precio": 2500.0,
+        "caliente": true,
+        "alergenos": []
+      },
+      {
+        "tipo": "BEBIDA",
+        "nombre": "Latte",
+        "precio": 6500.0,
+        "caliente": true,
+        "alergenos": []
+      },
+      {
+        "tipo": "BEBIDA",
+        "nombre": "Jugo de naranja",
+        "precio": 5000.0,
+        "caliente": false,
+        "alergenos": []
+      },
+      {
+        "tipo": "SNACK",
+        "nombre": "Brownie",
+        "precio": 4500.0,
+        "alergenos": [
+          "GLUTEN"
+        ]
+      }
+    ],
+    "sugerencias": [],
+    "ventas": [
+      {
+        "tipo": "TIENDA",
+        "fecha": "2026-10-18",
+        "comprador": "ana",
+        "puntosRedimidos": 0,
+        "confirmada": true,
+        "puntosProcesados": true,
+        "total": 131376.0,
+        "puntosGenerados": 2627,
+        "duenoCodigo": "leo",
+        "lineas": [
+          {
+            "tipoProducto": "ARTICULO",
+            "producto": "Balon de futbol",
+            "cantidad": 1,
+            "precioUnitario": 120000.0
+          }
+        ]
+      },
+      {
+        "tipo": "TIENDA",
+        "fecha": "2026-10-18",
+        "comprador": "ana",
+        "puntosRedimidos": 100,
+        "confirmada": true,
+        "puntosProcesados": true,
+        "total": 101050.0,
+        "puntosGenerados": 2021,
+        "duenoCodigo": null,
+        "lineas": [
+          {
+            "tipoProducto": "ARTICULO",
+            "producto": "Camiseta del club",
+            "cantidad": 1,
+            "precioUnitario": 85000.0
+          }
+        ]
+      },
+      {
+        "tipo": "CAFETERIA",
+        "fecha": "2026-10-18",
+        "comprador": "carlos",
+        "puntosRedimidos": 0,
+        "confirmada": true,
+        "puntosProcesados": true,
+        "total": 12980.0,
+        "puntosGenerados": 259,
+        "porcentajePropina": 0.1,
+        "lineas": [
+          {
+            "tipoProducto": "CAFETERIA",
+            "producto": "Latte",
+            "cantidad": 1,
+            "precioUnitario": 6500.0
+          },
+          {
+            "tipoProducto": "CAFETERIA",
+            "producto": "Brownie",
+            "cantidad": 1,
+            "precioUnitario": 4500.0
+          }
+        ]
+      }
+    ],
+    "mensualidades": []
+  },
+  "turnos": [
+    {
+      "empleado": "leo",
+      "dia": "MONDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "sara",
+      "dia": "MONDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "paula",
+      "dia": "MONDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "leo",
+      "dia": "TUESDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "sara",
+      "dia": "TUESDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "paula",
+      "dia": "TUESDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "max",
+      "dia": "MONDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    },
+    {
+      "empleado": "max",
+      "dia": "TUESDAY",
+      "horaInicio": "06:00",
+      "horaFin": "22:00"
+    }
+  ],
+  "solicitudes": []
+}
