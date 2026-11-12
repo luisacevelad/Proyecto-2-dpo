@@ -35,3 +35,20 @@ Hay un programa (metodo `main`) por cada tipo de usuario, todos en `src/cds/cons
 Las pruebas JUnit 5 estan en la carpeta `test`.
 `test/cds/historias` tiene una clase por historia de usuario del banco oficial; algunas tienen clases `@Nested`
 que prueban cada criterio de aceptacion.
+
+## Datos de prueba
+`datos/club.json` trae datos listos para probar cada historia del banco oficial desde la consola.
+Todos los usuarios tienen password = login + `123` (ej: `julia` / `julia123`).
+
+| HU | Consola y usuario | Como probarla |
+|---|---|---|
+| HU-ADM-01 | Administrador (`admin`) | Tienda > Catalogo > Trasladar: Raqueta de Bodega a Tienda (funciona); repetirlo (rechaza: ya no esta en origen); Balon de Bodega a Tienda (rechaza: ya esta en destino) |
+| HU-ADM-02 | Administrador (`admin`) | Usuarios y turnos > Resolver solicitudes: la de Maximo se aprueba; la de Sara (domingo) se rechaza por falta de cobertura |
+| HU-ADM-03 | Administrador (`admin`) | Tienda > Revisar sugerencias: "Barra de proteina" se aprueba y entra al catalogo; "Galletas de avena" no se deja aprobar (sin alergenos). El empleado ve el estado en "Ver el estado de mis sugerencias" |
+| HU-ENT-01 | Empleado (`leo`) | Partidos > Registrar partido oficial en la Liga Universitaria: incluir a Laura (rechaza: no esta en la nomina), a Julia (rechaza: suspendida por roja) o a otros 7 (se registra) |
+| HU-ENT-02 | Empleado (`leo`) | Partidos > Verificar minimo: Seneca Rojo si puede jugar (Julia no cuenta); Seneca Basket no puede (4 habilitados, Gabriel con restriccion medica) |
+| HU-JUG-01 | Socio (`carlos`) | Academias > Reservar en Academia de Tenis el 2026-12-01 de 10:00 a 11:00 (rechaza: 2 instalaciones ya ocupadas). Tienda y cafeteria > comprar un Latte (recibirlo en Cancha Tenis 1) y luego reservar la Cancha Padel 1 (rechaza por bebida caliente) |
+| HU-SOC-01 | Socio (`carlos`) | Academias > Reservar en Academia de Padel con 2 jugadores (rechaza: el padel es de dobles); con DOBLES y 4 jugadores (funciona) |
+| HU-SOC-02 | Socio (`hugo`) | Inscribirme en un equipo: Seneca Sub-15 (rechaza por categoria); Seneca Azul con un dorsal libre (funciona). Con `ana`: Seneca Azul (rechaza: ya juega futbol) |
+
+Si quiere volver a los datos originales despues de probar: `git restore datos/club.json`
