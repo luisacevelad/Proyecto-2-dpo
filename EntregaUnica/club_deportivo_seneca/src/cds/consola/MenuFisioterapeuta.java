@@ -8,7 +8,6 @@ import cds.usuarios.Fisioterapeuta;
 import cds.usuarios.RestriccionMedica;
 import cds.usuarios.Socio;
 
-/** Opciones propias del fisioterapeuta (HU-FIS-01 y HU-FIS-02). */
 public class MenuFisioterapeuta {
 	private final ConsolaEmpleado consola;
 

@@ -6,9 +6,6 @@ import java.util.List;
 import cds.ReglaNegocioException;
 import cds.usuarios.Usuario;
 
-/**
- * Dos jugadores que se inscriben juntos en un torneo de dobles.
- */
 public class ParejaTorneo implements Participante {
 	private final Usuario jugador1;
 	private final Usuario jugador2;

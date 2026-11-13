@@ -1,9 +1,5 @@
 package cds.torneos;
 
-/**
- * Una fila de la tabla de posiciones de un torneo.
- * Victoria = 3 puntos, empate = 1, derrota = 0.
- */
 public class Posicion {
 	public static final int PUNTOS_VICTORIA = 3;
 	public static final int PUNTOS_EMPATE = 1;

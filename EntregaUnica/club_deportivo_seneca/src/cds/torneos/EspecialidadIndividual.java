@@ -4,11 +4,6 @@ import cds.ReglaNegocioException;
 import cds.academias.Disciplina;
 import cds.academias.Nivel;
 
-/**
- * Torneo de disciplina individual, p. ej. cuadro de tenis nivel Intermedio.
- * Puede ser de sencillos (se inscriben jugadores) o de dobles (parejas).
- * Reutiliza Disciplina y Nivel de las academias del Proyecto 1.
- */
 public class EspecialidadIndividual extends Especialidad {
 	private final Disciplina disciplina;
 	private final Nivel nivel;
@@ -39,7 +34,6 @@ public class EspecialidadIndividual extends Especialidad {
 
 	@Override
 	public boolean permiteEmpate() {
-		// En tenis, padel y tenis de mesa siempre hay un ganador
 		return false;
 	}
 

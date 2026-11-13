@@ -28,6 +28,9 @@ public class VentaTienda extends Venta {
 		if (duenoCodigo != null) {
 			throw new ReglaNegocioException("La venta ya tiene un codigo de descuento");
 		}
+		if (getBono() != null) {
+			throw new ReglaNegocioException("El bono no es acumulable con otros descuentos");
+		}
 		duenoCodigo = dueno;
 	}
 

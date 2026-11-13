@@ -17,6 +17,7 @@ public abstract class Venta {
 	private int puntosRedimidos;
 	private boolean confirmada;
 	private boolean puntosProcesados;
+	private Bono bono;
 
 
 	protected Venta(LocalDate fecha, Usuario comprador) {
@@ -26,6 +27,7 @@ public abstract class Venta {
 		puntosRedimidos = 0;
 		confirmada = false;
 		puntosProcesados = false;
+		bono = null;
 	}
 
 
@@ -49,7 +51,7 @@ public abstract class Venta {
 	}
 
 	public double total() {
-		return subtotal() - descuento() + impuesto() + cargosAdicionales() - puntosRedimidos;
+		return subtotal() - descuento() - descuentoBono() + impuesto() + cargosAdicionales() - puntosRedimidos;
 	}
 
 	public int puntosGenerados() {
@@ -63,6 +65,10 @@ public abstract class Venta {
 		if (puntos <= 0) {
 			throw new ReglaNegocioException("Los puntos a redimir deben ser mayores que 0");
 		}
+		if (bono != null) {
+			throw new ReglaNegocioException("El bono no es acumulable con otros descuentos");
+		}
+		
 		int nuevosPuntosRedimidos = puntosRedimidos + puntos;
 		if (nuevosPuntosRedimidos > comprador.getPuntosFidelidad()) {
 			throw new ReglaNegocioException("El comprador no tiene suficientes puntos");
@@ -81,6 +87,11 @@ public abstract class Venta {
 			throw new ReglaNegocioException("La venta no tiene productos");
 		}
 		validarPuntosRedimidos();
+		
+		if (bono != null) {
+			bono.marcarUsado();
+		}
+		
 		confirmada = true;
 	}
 
@@ -118,7 +129,33 @@ public abstract class Venta {
 			throw new ReglaNegocioException("Los puntos no pueden superar el total de la compra");
 		}
 	}
+	
+	public void aplicarBono(Bono b) throws ReglaNegocioException {
+		if (confirmada) {
+			throw new ReglaNegocioException("La venta ya fue confirmada");
+		}
+		if (b.getDueno() != comprador) {
+			throw new ReglaNegocioException("El bono no pertenece al comprador");
+		}
+		if (b.isUsado()) {
+			throw new ReglaNegocioException("Este bono ya fue usado");
+		}
+		if (bono != null || descuento() > 0 || puntosRedimidos > 0) {
+			throw new ReglaNegocioException("El bono no es acumulable con otros descuentos");
+		}
+		bono = b;
+	}
 
+	public double descuentoBono() {
+		if (bono == null) {
+			return 0;
+		}
+		return bono.calcularDescuento(subtotal());
+	}
+
+	public Bono getBono() {
+		return bono;
+	}
 
 	protected abstract void validarProducto(Vendible producto) throws ReglaNegocioException;
 

@@ -14,21 +14,7 @@ import cds.conjunto.PartidoInterno;
 import cds.partidos.Partido;
 import cds.usuarios.Usuario;
 
-/**
- * Decide quien tiene derecho a los cupos preferenciales (mejor ranking o
- * desempeno de la categoria). Usa informacion que ya existia en el Proyecto 1:
- *
- * - Jugadores: el puntaje de ranking de su inscripcion en la academia de esa
- *   disciplina y ese nivel (InscripcionAcademia.getPuntajeRanking()).
- * - Parejas: el promedio del ranking de los dos jugadores.
- * - Equipos: puntos por desempeno = 3 por victoria y 1 por empate en partidos
- *   internos jugados, mas sus puntos en ligas.
- *
- * Un participante es preferencial si esta entre los k mejores de su
- * categoria, con k = cupos preferenciales del torneo (en dobles se compara
- * contra los 2k mejores jugadores, porque cada pareja ocupa 2 jugadores).
- * Quien no tiene ranking (puntaje 0) nunca es preferencial.
- */
+
 public class RankingTorneos {
 	private final Club club;
 
@@ -69,7 +55,6 @@ public class RankingTorneos {
 		return suma / p.getIntegrantes().size();
 	}
 
-	/** Puntajes de todos los equipos o jugadores de la categoria del torneo. */
 	private List<Double> puntajesCategoria(Especialidad esp) {
 		List<Double> puntajes = new ArrayList<Double>();
 		if (esp instanceof EspecialidadConjunto) {

@@ -1,6 +1,7 @@
 package cds;
 
 import java.time.DayOfWeek;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -42,6 +43,9 @@ import cds.torneos.InscripcionTorneo;
 import cds.torneos.Participante;
 import cds.torneos.RankingTorneos;
 import cds.torneos.Torneo;
+import cds.torneos.FormatoTorneo;
+import cds.torneos.TorneoRecreativo;
+import cds.ventas.Bono;
 
 public class Club {
 	private final List<Usuario> usuarios;
@@ -484,26 +488,52 @@ public class Club {
 		return lista;
 	}
 
-	/**
-	 * Inscribe a un participante en un torneo. Primero aplica las reglas que
-	 * dependen del club (turnos, tipo de usuario) y luego calcula si tiene
-	 * derecho a cupo preferencial segun el ranking.
-	 */
+
 	public InscripcionTorneo inscribirEnTorneo(Torneo t, Participante p, LocalDate hoy) throws ReglaNegocioException {
 		validarParticipanteTorneo(t, p, hoy);
 		boolean preferencial = new RankingTorneos(this).esPreferencial(p, t);
 		return t.inscribir(p, hoy, preferencial);
 	}
 
-	/**
-	 * Reglas del club sobre quien puede jugar un torneo.
-	 * TODO (Persona B): empleados solo en torneos individuales y si no estan de
-	 * turno el dia de inicio; reglas de estudiantes y externos.
-	 */
 	protected void validarParticipanteTorneo(Torneo t, Participante p, LocalDate hoy) throws ReglaNegocioException {
+		for (Usuario u : p.getIntegrantes()) {
+			if (u instanceof Administrador) {
+				throw new ReglaNegocioException("Los administradores no pueden participar en torneos");
+			}
+			if (u instanceof Empleado) {
+				if (t.getFormato() == FormatoTorneo.CONJUNTO) {
+					throw new ReglaNegocioException(u.getNombre() + " es empleado: solo puede jugar torneos individuales");
+				}
+				DayOfWeek dia = t.getFechaInicio().getDayOfWeek();
+				if (tieneTurno((Empleado) u, dia)) {
+					throw new ReglaNegocioException(u.getNombre() + " tiene turno el " + dia + " (dia de inicio de " + t.getNombre() + ")");
+				}
+			}
+		}
 	}
 
-	/** Saca del torneo la inscripcion en la que juega este usuario. */
+	private boolean tieneTurno(Empleado e, DayOfWeek dia) {
+		for (Turno turno : turnos) {
+			if (turno.getEmpleado() == e && turno.getDia() == dia) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<Bono> bonosDisponibles(Usuario u) {
+		List<Bono> lista = new ArrayList<Bono>();
+		for (Torneo t : torneos) {
+			if (t instanceof TorneoRecreativo) {
+				for (Bono b : ((TorneoRecreativo) t).getBonosEntregados()) {
+					if (b.getDueno() == u && !b.isUsado()) {
+						lista.add(b);
+					}
+				}
+			}
+		}
+		return lista;
+	}
 	public void desinscribirDeTorneo(Torneo t, Usuario u, LocalDate hoy) throws ReglaNegocioException {
 		InscripcionTorneo i = t.buscarInscripcion(u);
 		if (i == null) {

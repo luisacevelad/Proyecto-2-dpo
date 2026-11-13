@@ -5,11 +5,6 @@ import java.util.List;
 
 import cds.usuarios.Usuario;
 
-/**
- * Un jugador que se inscribe solo (torneo individual de sencillos).
- * Recibe un Usuario y no un Socio porque tambien pueden jugar empleados,
- * estudiantes y externos.
- */
 public class JugadorTorneo implements Participante {
 	private final Usuario jugador;
 

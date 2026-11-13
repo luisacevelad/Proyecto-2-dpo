@@ -9,10 +9,6 @@ import cds.torneos.InscripcionTorneo;
 import cds.torneos.Posicion;
 import cds.torneos.Torneo;
 
-/**
- * Impresion de torneos en consola. La usan la consola del administrador y la
- * del jugador (consultar estado e historial), para no repetir codigo.
- */
 public class VistaTorneos {
 
 	private VistaTorneos() {

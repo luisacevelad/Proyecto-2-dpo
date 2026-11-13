@@ -5,10 +5,6 @@ import cds.conjunto.CategoriaEdad;
 import cds.conjunto.DeporteConjunto;
 import cds.conjunto.Equipo;
 
-/**
- * Torneo de deporte de conjunto, p. ej. mini-campeonato de futbol Sub-15.
- * Reutiliza DeporteConjunto y CategoriaEdad del Proyecto 1.
- */
 public class EspecialidadConjunto extends Especialidad {
 	private final DeporteConjunto deporte;
 	private final CategoriaEdad categoria;
