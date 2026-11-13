@@ -37,7 +37,7 @@ Las pruebas JUnit 5 estan en la carpeta `test`. Para correrlas todas: clic derec
 
 | Paquete | Que prueba |
 |---|---|
-| `test/cds/historias` | Una clase por historia de usuario del banco oficial, con un `@Nested` por criterio de aceptacion |
+| `test/cds/historias` | Una clase por historia de usuario: las 8 del banco oficial y las 7 de torneos (HU-ADM-04 a 06, HU-EMP-01, HU-SOC-03 a 05), con un `@Nested` por criterio de aceptacion |
 | `test/cds/requerimientos` | Requerimientos funcionales del Proyecto 1: ventas (descuentos, IVA, impoconsumo, propina, puntos, bebidas calientes), mensualidades y reporte de ingresos, entrenamientos y restricciones medicas, partidos internos, ligas y ranking, y reglas de reservas, turnos y codigos |
 | `test/cds/persistencia` | Guardar y cargar `club.json` sin perder informacion (incluidos los torneos), archivos antiguos y archivos con errores |
 
@@ -61,10 +61,13 @@ Todos los usuarios tienen password = login + `123` (ej: `julia` / `julia123`).
 |---|---|---|
 | Copa Recreativa Tenis de Mesa | Inscripciones abiertas | Socio > Torneos > Inscribirme. Los 4 cupos regulares estan llenos y queda 1 preferencial: `laura` no puede entrar (cupo reservado al ranking); `felipe` (primero del ranking) si entra como preferencial |
 | Abierto Competitivo de Tenis | Inscripciones abiertas | Tarifa de $50.000; quedan 7 cupos. Probar inscribirse y salirse como socio (`laura`) o empleado (`max`) |
-| Copa Competitiva de Futbol | Inscripciones abiertas | Torneo por equipos con Seneca Rojo inscrito (preferencial por su desempeno) |
+| Copa Competitiva de Futbol | Inscripciones abiertas | Torneo por equipos con Seneca Rojo y Seneca Azul inscritos (tarifa de $200.000 por equipo) |
 | Liga Recreativa de Tenis | En curso | Registrar los 2 resultados pendientes y finalizarla (Administrador > Torneos) |
-| Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla y el historial. Ganaron Carlos y Diana: cada uno tiene un bono del 20% (Tienda y cafeteria > comprar > usar bono) |
-| Copa Relampago de Tenis de Mesa | Finalizado | Competitivo con un empleado (`max`): no pago inscripcion y no recibe premio; Felipe gano $40.000 (Torneos > Ver mis bonos y premios) |
+| Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla y el historial. Ganaron Carlos y Diana: cada uno tiene un bono del 15% (Tienda y cafeteria > comprar > usar bono) |
+| Copa Relampago de Tenis de Mesa | Finalizado | Competitivo con un empleado (`max`): no pago inscripcion y no recibe premio; Felipe gano $28.000, el 70% de lo recaudado (Torneos > Ver mis bonos y premios) |
+
+Reglas de torneos: los cupos preferenciales (20% redondeado hacia arriba) se liberan 3 dias antes del inicio;
+el ganador de un recreativo recibe un bono del 15% y el de un competitivo el 70% de lo recaudado.
 
 Estudiantes y externos: el administrador los registra en Usuarios y turnos; entran por `ConsolaSocio` y solo ven Torneos y la tienda.
 `sebas` (estudiante) y `pablo` (externo) ya estan inscritos en el Abierto Competitivo de Tenis.

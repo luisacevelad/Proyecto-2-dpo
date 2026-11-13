@@ -198,6 +198,7 @@ public class Club {
 	}
 
 	public void resolverSolicitud(Administrador admin, SolicitudCambioTurno s, boolean aprobar) throws ReglaNegocioException {
+		validarAdministrador(admin);
 		if (s.getEstado() != EstadoSolicitud.PENDIENTE) {
 			throw new ReglaNegocioException("La solicitud ya fue resuelta: " + s.getEstado());
 		}
@@ -369,6 +370,22 @@ public class Club {
 
 	public List<SolicitudCambioTurno> getSolicitudes() {
 		return solicitudes;
+	}
+
+	// ------------------------------------------------------------------
+	// Autorizacion
+	// ------------------------------------------------------------------
+
+	/**
+	 * Una operacion administrativa no se autoriza solo por recibir un objeto Administrador:
+	 * debe ser exactamente el administrador registrado en este club con ese login (el mismo
+	 * objeto que devuelve autenticar). Asi un Administrador creado por fuera del club no
+	 * puede aprobar nada.
+	 */
+	public void validarAdministrador(Administrador admin) throws ReglaNegocioException {
+		if (admin == null || buscarUsuario(admin.getLogin()) != admin) {
+			throw new ReglaNegocioException("Operacion no autorizada: se requiere un administrador autenticado en el club");
+		}
 	}
 
 	// ------------------------------------------------------------------

@@ -31,9 +31,10 @@ class HuAdm02CambioTurnoTest {
 	private Administrador admin;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws ReglaNegocioException {
 		club = new Club();
 		admin = new Administrador("admin", "123", "Admin");
+		club.registrarUsuario(admin);
 	}
 
 	private Turno turnoCompleto(Empleado e, DayOfWeek dia) {

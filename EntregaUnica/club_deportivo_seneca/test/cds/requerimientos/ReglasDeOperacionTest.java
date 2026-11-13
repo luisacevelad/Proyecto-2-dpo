@@ -23,7 +23,11 @@ import cds.academias.Instalacion;
 import cds.academias.Modalidad;
 import cds.academias.Nivel;
 import cds.academias.TipoInstalacion;
+import cds.usuarios.Administrador;
 import cds.usuarios.Entrenador;
+import cds.usuarios.EstadoSolicitud;
+import cds.usuarios.SolicitudCambioTurno;
+import cds.usuarios.Turno;
 import cds.usuarios.Fisioterapeuta;
 import cds.usuarios.Socio;
 
@@ -100,6 +104,37 @@ class ReglasDeOperacionTest {
 					() -> club.asignarTurno(leo, DayOfWeek.MONDAY, LocalTime.of(14, 0), LocalTime.of(8, 0)));
 			assertThrows(ReglaNegocioException.class,
 					() -> club.asignarTurno(leo, DayOfWeek.MONDAY, LocalTime.of(20, 0), LocalTime.of(23, 0)));
+		}
+	}
+
+	@Nested
+	@DisplayName("Autorizacion de operaciones administrativas")
+	class Autorizacion {
+
+		@Test
+		@DisplayName("un administrador que no esta registrado en el club no puede resolver solicitudes")
+		void administradorAjeno() throws ReglaNegocioException {
+			Entrenador leo = new Entrenador("leo", "1", "Leo", "LEO");
+			club.registrarUsuario(leo);
+			Turno turno = club.asignarTurno(leo, DayOfWeek.MONDAY, LocalTime.of(6, 0), LocalTime.of(14, 0));
+			SolicitudCambioTurno s = club.solicitarCambioTurno(leo, turno, DayOfWeek.TUESDAY, LocalTime.of(6, 0), LocalTime.of(14, 0));
+			Administrador intruso = new Administrador("admin", "x", "Intruso");
+			assertThrows(ReglaNegocioException.class, () -> club.resolverSolicitud(intruso, s, true));
+			assertThrows(ReglaNegocioException.class, () -> club.resolverSolicitud(null, s, true));
+			assertEquals(EstadoSolicitud.PENDIENTE, s.getEstado());
+		}
+
+		@Test
+		@DisplayName("el administrador autenticado si puede resolverlas")
+		void administradorDelClub() throws ReglaNegocioException {
+			Administrador admin = new Administrador("admin", "admin123", "Admin");
+			club.registrarUsuario(admin);
+			Entrenador leo = new Entrenador("leo", "1", "Leo", "LEO");
+			club.registrarUsuario(leo);
+			Turno turno = club.asignarTurno(leo, DayOfWeek.MONDAY, LocalTime.of(6, 0), LocalTime.of(14, 0));
+			SolicitudCambioTurno s = club.solicitarCambioTurno(leo, turno, DayOfWeek.TUESDAY, LocalTime.of(6, 0), LocalTime.of(14, 0));
+			club.resolverSolicitud((Administrador) club.autenticar("admin", "admin123"), s, false);
+			assertEquals(EstadoSolicitud.RECHAZADA, s.getEstado());
 		}
 	}
 

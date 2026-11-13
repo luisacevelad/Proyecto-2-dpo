@@ -1268,7 +1268,7 @@
       },
       "cupos": 5,
       "fechaInicio": "2026-12-10",
-      "fechaLimitePreferencial": "2026-12-03",
+      "fechaLimitePreferencial": "2026-12-07",
       "estado": "INSCRIPCIONES_ABIERTAS",
       "preferencialesLiberados": false,
       "inscripciones": [
@@ -1325,7 +1325,7 @@
       },
       "cupos": 8,
       "fechaInicio": "2026-12-15",
-      "fechaLimitePreferencial": "2026-12-08",
+      "fechaLimitePreferencial": "2026-12-12",
       "estado": "INSCRIPCIONES_ABIERTAS",
       "preferencialesLiberados": false,
       "inscripciones": [
@@ -1372,7 +1372,7 @@
       },
       "cupos": 4,
       "fechaInicio": "2026-12-12",
-      "fechaLimitePreferencial": "2026-12-05",
+      "fechaLimitePreferencial": "2026-12-09",
       "estado": "INSCRIPCIONES_ABIERTAS",
       "preferencialesLiberados": false,
       "inscripciones": [
@@ -1382,7 +1382,16 @@
             "equipo": "Seneca Rojo"
           },
           "fecha": "2026-11-11",
-          "preferencial": true,
+          "preferencial": false,
+          "montoPagado": 200000.0
+        },
+        {
+          "participante": {
+            "tipo": "EQUIPO",
+            "equipo": "Seneca Azul"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": false,
           "montoPagado": 200000.0
         }
       ],
@@ -1391,7 +1400,7 @@
     },
     {
       "tipo": "RECREATIVO",
-      "porcentajeBono": 10.0,
+      "porcentajeBono": 15.0,
       "bonosEntregados": [],
       "nombre": "Liga Recreativa de Tenis",
       "especialidad": {
@@ -1402,7 +1411,7 @@
       },
       "cupos": 4,
       "fechaInicio": "2026-11-09",
-      "fechaLimitePreferencial": "2026-11-04",
+      "fechaLimitePreferencial": "2026-11-06",
       "estado": "EN_CURSO",
       "preferencialesLiberados": false,
       "inscripciones": [
@@ -1467,16 +1476,16 @@
     },
     {
       "tipo": "RECREATIVO",
-      "porcentajeBono": 20.0,
+      "porcentajeBono": 15.0,
       "bonosEntregados": [
         {
           "dueno": "carlos",
-          "porcentaje": 20.0,
+          "porcentaje": 15.0,
           "usado": false
         },
         {
           "dueno": "diana",
-          "porcentaje": 20.0,
+          "porcentaje": 15.0,
           "usado": false
         }
       ],
@@ -1489,7 +1498,7 @@
       },
       "cupos": 6,
       "fechaInicio": "2026-10-20",
-      "fechaLimitePreferencial": "2026-10-15",
+      "fechaLimitePreferencial": "2026-10-17",
       "estado": "FINALIZADO",
       "preferencialesLiberados": false,
       "inscripciones": [
@@ -1561,7 +1570,7 @@
       "premiosEntregados": [
         {
           "usuario": "felipe",
-          "monto": 40000.0
+          "monto": 28000.0
         }
       ],
       "nombre": "Copa Relampago de Tenis de Mesa",
@@ -1573,7 +1582,7 @@
       },
       "cupos": 4,
       "fechaInicio": "2026-11-05",
-      "fechaLimitePreferencial": "2026-11-01",
+      "fechaLimitePreferencial": "2026-11-02",
       "estado": "FINALIZADO",
       "preferencialesLiberados": false,
       "inscripciones": [
