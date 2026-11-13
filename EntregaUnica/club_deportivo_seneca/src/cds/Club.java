@@ -31,6 +31,11 @@ import cds.ventas.Mensualidad;
 import cds.ventas.Rubro;
 import cds.ventas.TiendaCafeteria;
 import cds.ventas.Venta;
+import cds.torneos.EstadoTorneo;
+import cds.torneos.InscripcionTorneo;
+import cds.torneos.Participante;
+import cds.torneos.RankingTorneos;
+import cds.torneos.Torneo;
 
 public class Club {
 	private final List<Usuario> usuarios;
@@ -42,6 +47,7 @@ public class Club {
 	private final List<SesionEntrenamiento> sesiones;
 	private final List<Turno> turnos;
 	private final List<SolicitudCambioTurno> solicitudes;
+	private final List<Torneo> torneos;
 
 	public static final LocalTime APERTURA = LocalTime.of(6, 0);
 	public static final LocalTime CIERRE = LocalTime.of(22, 0);
@@ -56,6 +62,7 @@ public class Club {
 		sesiones = new ArrayList<SesionEntrenamiento>();
 		turnos = new ArrayList<Turno>();
 		solicitudes = new ArrayList<SolicitudCambioTurno>();
+		torneos = new ArrayList<Torneo>();
 	}
 
 
@@ -335,4 +342,65 @@ public class Club {
 		return solicitudes;
 	}
 
+	// ------------------------------------------------------------------
+	// Torneos internos (Proyecto 2)
+	// ------------------------------------------------------------------
+
+	public void registrarTorneo(Torneo t) throws ReglaNegocioException {
+		if (buscarTorneo(t.getNombre()) != null) {
+			throw new ReglaNegocioException("Ya existe el torneo " + t.getNombre());
+		}
+		torneos.add(t);
+	}
+
+	public Torneo buscarTorneo(String nombre) {
+		for (Torneo t : torneos) {
+			if (t.getNombre().equalsIgnoreCase(nombre)) {
+				return t;
+			}
+		}
+		return null;
+	}
+
+	public List<Torneo> torneosPorEstado(EstadoTorneo estado) {
+		List<Torneo> lista = new ArrayList<Torneo>();
+		for (Torneo t : torneos) {
+			if (t.getEstado() == estado) {
+				lista.add(t);
+			}
+		}
+		return lista;
+	}
+
+	/**
+	 * Inscribe a un participante en un torneo. Primero aplica las reglas que
+	 * dependen del club (turnos, tipo de usuario) y luego calcula si tiene
+	 * derecho a cupo preferencial segun el ranking.
+	 */
+	public InscripcionTorneo inscribirEnTorneo(Torneo t, Participante p, LocalDate hoy) throws ReglaNegocioException {
+		validarParticipanteTorneo(t, p, hoy);
+		boolean preferencial = new RankingTorneos(this).esPreferencial(p, t);
+		return t.inscribir(p, hoy, preferencial);
+	}
+
+	/**
+	 * Reglas del club sobre quien puede jugar un torneo.
+	 * TODO (Persona B): empleados solo en torneos individuales y si no estan de
+	 * turno el dia de inicio; reglas de estudiantes y externos.
+	 */
+	protected void validarParticipanteTorneo(Torneo t, Participante p, LocalDate hoy) throws ReglaNegocioException {
+	}
+
+	/** Saca del torneo la inscripcion en la que juega este usuario. */
+	public void desinscribirDeTorneo(Torneo t, Usuario u, LocalDate hoy) throws ReglaNegocioException {
+		InscripcionTorneo i = t.buscarInscripcion(u);
+		if (i == null) {
+			throw new ReglaNegocioException(u.getNombre() + " no esta inscrito en " + t.getNombre());
+		}
+		t.desinscribir(i, hoy);
+	}
+
+	public List<Torneo> getTorneos() {
+		return torneos;
+	}
 }

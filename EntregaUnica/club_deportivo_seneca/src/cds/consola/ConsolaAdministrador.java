@@ -3,10 +3,6 @@ package cds.consola;
 import cds.usuarios.Administrador;
 import cds.usuarios.Usuario;
 
-/**
- * Consola del administrador. El menu principal solo agrupa; cada area
- * (personal, deportes, tienda) vive en su propia clase para que sea facil de extender.
- */
 public class ConsolaAdministrador extends ConsolaBase {
 
 	public static void main(String[] args) {
@@ -33,7 +29,7 @@ public class ConsolaAdministrador extends ConsolaBase {
 		menu.agregarSubmenu("Usuarios y turnos", new MenuAdminPersonal(this).construir());
 		menu.agregarSubmenu("Equipos, academias y competencias", new MenuAdminDeportes(this).construir());
 		menu.agregarSubmenu("Tienda, cafeteria y reportes", new MenuAdminTienda(this).construir());
-		// TODO Torneos (Persona A): submenu para crear torneos, consultar su estado e historial
+		menu.agregarSubmenu("Torneos", new MenuAdminTorneos(this).construir());
 		return menu;
 	}
 }
