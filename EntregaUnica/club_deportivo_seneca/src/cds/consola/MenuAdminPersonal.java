@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import cds.Club;
 import cds.ReglaNegocioException;
 import cds.usuarios.Empleado;
 import cds.usuarios.Entrenador;
@@ -74,11 +73,6 @@ public class MenuAdminPersonal {
 		String password = entrada.texto("Password");
 		String nombre = entrada.texto("Nombre completo");
 		String codigo = entrada.texto("Codigo de descuento");
-		for (Empleado e : consola.empleados()) {
-			if (codigo.equalsIgnoreCase(e.getCodigoDescuento())) {
-				throw new ReglaNegocioException("El codigo " + codigo + " ya lo tiene " + e.getNombre());
-			}
-		}
 		Empleado empleado = esEntrenador ? new Entrenador(login, password, nombre, codigo)
 				: new Fisioterapeuta(login, password, nombre, codigo);
 		consola.club.registrarUsuario(empleado);
@@ -115,13 +109,7 @@ public class MenuAdminPersonal {
 		DayOfWeek dia = entrada.elegirEnum("Dia", DayOfWeek.values());
 		LocalTime inicio = entrada.hora("Hora de inicio");
 		LocalTime fin = entrada.hora("Hora de fin");
-		if (!fin.isAfter(inicio)) {
-			throw new ReglaNegocioException("La hora de fin debe ser posterior a la de inicio");
-		}
-		if (inicio.isBefore(Club.APERTURA) || fin.isAfter(Club.CIERRE)) {
-			throw new ReglaNegocioException("El club atiende de " + Club.APERTURA + " a " + Club.CIERRE);
-		}
-		consola.club.registrarTurno(new Turno(e, dia, inicio, fin));
+		consola.club.asignarTurno(e, dia, inicio, fin);
 		System.out.println("Turno asignado a " + e.getNombre() + ".");
 	}
 

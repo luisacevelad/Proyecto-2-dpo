@@ -1,11 +1,11 @@
 package cds.consola;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import cds.Club;
 import cds.ReglaNegocioException;
 import cds.academias.Academia;
 import cds.academias.InscripcionAcademia;
@@ -134,20 +134,11 @@ public class ConsolaSocio extends ConsolaBase {
 		Academia a = elegirAcademia(misAcademias());
 		Instalacion inst = elegirInstalacion(a.getInstalaciones());
 		LocalDate fecha = entrada.fechaOHoy("Fecha");
-		if (fecha.isBefore(hoy())) {
-			throw new ReglaNegocioException("No se puede reservar en una fecha pasada");
-		}
 		LocalTime inicio = entrada.hora("Hora de inicio");
 		LocalTime fin = entrada.hora("Hora de fin");
-		if (fecha.equals(hoy()) && inicio.isBefore(LocalTime.now())) {
-			throw new ReglaNegocioException("Esa hora ya paso");
-		}
-		if (inicio.isBefore(Club.APERTURA) || fin.isAfter(Club.CIERRE)) {
-			throw new ReglaNegocioException("El club atiende de " + Club.APERTURA + " a " + Club.CIERRE);
-		}
 		Modalidad modalidad = entrada.elegirEnum("Modalidad", Modalidad.values());
 		int jugadores = entrada.entero("Numero de jugadores", 1, 4);
-		a.reservar(inst, socio(), fecha, inicio, fin, jugadores, modalidad);
+		club.reservar(a, inst, socio(), fecha, inicio, fin, jugadores, modalidad, LocalDateTime.now());
 		System.out.println("Reserva registrada: " + inst.getNombre() + " el " + fecha + " de " + inicio + " a " + fin);
 	}
 

@@ -17,10 +17,9 @@ import cds.catalogo.Sugerencia;
 import cds.catalogo.TipoSugerencia;
 import cds.catalogo.Ubicacion;
 import cds.usuarios.Socio;
-import cds.ventas.Mensualidad;
+import cds.ventas.ResumenVentas;
 import cds.ventas.Rubro;
 import cds.ventas.TiendaCafeteria;
-import cds.ventas.Venta;
 
 /** Administracion de la tienda, la cafeteria y los reportes (HU-ADM-01 y HU-ADM-03). */
 public class MenuAdminTienda {
@@ -165,45 +164,24 @@ public class MenuAdminTienda {
 		int anio = entrada.entero("Anio", 2020, 2100);
 		int mes = entrada.entero("Mes", 1, 12);
 		YearMonth periodo = YearMonth.of(anio, mes);
-		for (Mensualidad m : tienda().getMensualidades()) {
-			if (m.getSocio() == s && m.getMes().equals(periodo)) {
-				throw new ReglaNegocioException(s.getNombre() + " ya tiene la mensualidad de " + periodo);
-			}
-		}
 		double monto = entrada.decimal("Monto", 1, 100000000);
-		tienda().registrarMensualidad(new Mensualidad(s, periodo, monto));
+		consola.club.generarMensualidad(s, periodo, monto);
 		System.out.println("Mensualidad de " + periodo + " generada para " + s.getNombre() + ".");
 	}
 
 	private void reporteIngresos() throws ReglaNegocioException {
 		LocalDate desde = entrada.fecha("Desde");
 		LocalDate hasta = entrada.fecha("Hasta");
-		if (hasta.isBefore(desde)) {
-			throw new ReglaNegocioException("La fecha final no puede ser anterior a la inicial");
-		}
 		boolean hayDatos = false;
-		for (Rubro rubro : new Rubro[] { Rubro.TIENDA, Rubro.CAFETERIA }) {
-			int cantidad = 0;
-			double impuestos = 0;
-			double propinas = 0;
-			for (Venta v : tienda().getVentas()) {
-				if (v.getRubro() == rubro && v.isConfirmada() && !v.getFecha().isBefore(desde) && !v.getFecha().isAfter(hasta)) {
-					cantidad++;
-					impuestos += v.impuesto();
-					propinas += v.cargosAdicionales();
-				}
-			}
-			if (cantidad > 0) {
+		for (Rubro rubro : new Rubro[] { Rubro.TIENDA, Rubro.CAFETERIA, Rubro.MENSUALIDAD }) {
+			ResumenVentas r = consola.club.resumenVentas(rubro, desde, hasta);
+			if (!r.estaVacio()) {
 				hayDatos = true;
-				System.out.println(rubro + ": " + cantidad + " ventas, total " + ConsolaBase.pesos(consola.club.totalVentas(rubro, desde, hasta))
-						+ ", impuestos " + ConsolaBase.pesos(impuestos)
-						+ (rubro == Rubro.CAFETERIA ? ", propinas " + ConsolaBase.pesos(propinas) : ""));
+				System.out.println(rubro + ": " + r.getCantidad() + (rubro == Rubro.MENSUALIDAD ? " pagos (exentos)" : " ventas")
+						+ ", total " + ConsolaBase.pesos(r.getTotal())
+						+ (rubro == Rubro.MENSUALIDAD ? "" : ", impuestos " + ConsolaBase.pesos(r.getImpuestos()))
+						+ (rubro == Rubro.CAFETERIA ? ", propinas " + ConsolaBase.pesos(r.getPropinas()) : ""));
 			}
-		}
-		double mensualidades = consola.club.totalVentas(Rubro.MENSUALIDAD, desde, hasta);
-		if (mensualidades > 0) {
-			hayDatos = true;
-			System.out.println("MENSUALIDADES (exentas): " + ConsolaBase.pesos(mensualidades));
 		}
 		if (!hayDatos) {
 			System.out.println("No hay datos disponibles para el periodo.");

@@ -27,6 +27,7 @@ public class PartidoCompetencia extends Partido{
 		this.institucionRival = institucionRival;
 		this.escenario = escenario;
 		this.deporte = deporte;
+		this.competencia = nomina.getCompetencia();
 		nomina.agregarPartido(this);
 	}
 	

@@ -76,14 +76,9 @@ public class MenuAdminDeportes {
 	private void agregarInstalacion() throws ReglaNegocioException {
 		Academia academia = consola.elegirAcademia(consola.club.getAcademias());
 		String nombre = entrada.texto("Nombre de la instalacion");
-		for (Instalacion i : consola.instalaciones()) {
-			if (i.getNombre().equalsIgnoreCase(nombre)) {
-				throw new ReglaNegocioException("Ya existe una instalacion llamada " + nombre);
-			}
-		}
 		TipoInstalacion tipo = entrada.elegirEnum("Tipo", TipoInstalacion.values());
 		boolean techada = entrada.siNo("Es techada?");
-		academia.agregarInstalacion(new Instalacion(nombre, tipo, techada));
+		consola.club.agregarInstalacion(academia, new Instalacion(nombre, tipo, techada));
 		System.out.println("Instalacion " + nombre + " agregada a " + academia.getNombre() + ".");
 	}
 

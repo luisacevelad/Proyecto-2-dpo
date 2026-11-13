@@ -92,12 +92,11 @@ public class MenuCompras {
 	}
 
 	private Empleado buscarDuenoCodigo(String codigo) throws ReglaNegocioException {
-		for (Empleado e : consola.empleados()) {
-			if (e.getCodigoDescuento() != null && e.getCodigoDescuento().equalsIgnoreCase(codigo)) {
-				return e;
-			}
+		Empleado dueno = consola.club.buscarEmpleadoPorCodigo(codigo);
+		if (dueno == null) {
+			throw new ReglaNegocioException("El codigo " + codigo + " no existe");
 		}
-		throw new ReglaNegocioException("El codigo " + codigo + " no existe");
+		return dueno;
 	}
 
 	private void ofrecerPuntos(Venta venta) throws ReglaNegocioException {
