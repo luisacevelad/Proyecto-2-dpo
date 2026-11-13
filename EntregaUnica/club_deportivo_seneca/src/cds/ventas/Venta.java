@@ -157,6 +157,11 @@ public abstract class Venta {
 		return bono;
 	}
 
+	/** Solo para la persistencia: vuelve a asociar el bono usado en una venta guardada, sin validar. */
+	public void restaurarBono(Bono b) {
+		bono = b;
+	}
+
 	protected abstract void validarProducto(Vendible producto) throws ReglaNegocioException;
 
 	public abstract double descuento();

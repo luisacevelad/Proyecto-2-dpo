@@ -1,5 +1,7 @@
 package cds.consola;
 
+import java.util.List;
+
 import cds.ReglaNegocioException;
 import cds.academias.Instalacion;
 import cds.catalogo.Articulo;
@@ -9,6 +11,7 @@ import cds.catalogo.ProductoCafeteria;
 import cds.catalogo.Ubicacion;
 import cds.usuarios.Empleado;
 import cds.usuarios.Usuario;
+import cds.ventas.Bono;
 import cds.ventas.LineaVenta;
 import cds.ventas.TiendaCafeteria;
 import cds.ventas.Venta;
@@ -32,7 +35,7 @@ public class MenuCompras {
 		menu.agregar("Comprar en la cafeteria", this::comprarCafeteria);
 		menu.agregar("Ya termine mi bebida caliente", this::terminarBebida);
 		menu.agregar("Ver mis puntos de fidelidad", this::verPuntos);
-		// TODO Torneos (Persona B): opcion para usar el bono de descuento ganado en un torneo recreativo
+		menu.agregar("Ver mis bonos de torneos", this::verBonos);
 		return menu;
 	}
 
@@ -60,13 +63,16 @@ public class MenuCompras {
 		if (venta.getLineas().isEmpty()) {
 			throw new ReglaNegocioException("La compra no tiene articulos");
 		}
-		String codigo = entrada.textoOpcional("Codigo de descuento de empleado");
-		if (!codigo.isEmpty()) {
-			venta.aplicarCodigo(buscarDuenoCodigo(codigo));
+		if (!ofrecerBono(venta)) {
+			String codigo = entrada.textoOpcional("Codigo de descuento de empleado");
+			if (!codigo.isEmpty()) {
+				venta.aplicarCodigo(buscarDuenoCodigo(codigo));
+			}
+			ofrecerPuntos(venta);
 		}
-		ofrecerPuntos(venta);
 		System.out.println("Subtotal: " + ConsolaBase.pesos(venta.subtotal()));
 		System.out.println("Descuento: -" + ConsolaBase.pesos(venta.descuento()));
+		mostrarBono(venta);
 		System.out.println("IVA (19%): " + ConsolaBase.pesos(venta.impuesto()));
 		System.out.println("Puntos redimidos: -" + venta.getPuntosRedimidos());
 		System.out.println("TOTAL: " + ConsolaBase.pesos(venta.total()));
@@ -92,12 +98,11 @@ public class MenuCompras {
 	}
 
 	private Empleado buscarDuenoCodigo(String codigo) throws ReglaNegocioException {
-		for (Empleado e : consola.empleados()) {
-			if (e.getCodigoDescuento() != null && e.getCodigoDescuento().equalsIgnoreCase(codigo)) {
-				return e;
-			}
+		Empleado dueno = consola.club.buscarEmpleadoPorCodigo(codigo);
+		if (dueno == null) {
+			throw new ReglaNegocioException("El codigo " + codigo + " no existe");
 		}
-		throw new ReglaNegocioException("El codigo " + codigo + " no existe");
+		return dueno;
 	}
 
 	private void ofrecerPuntos(Venta venta) throws ReglaNegocioException {
@@ -126,13 +131,16 @@ public class MenuCompras {
 		if (entrada.siNo("Propina sugerida del 10%. Desea cambiarla?")) {
 			venta.setPorcentajePropina(entrada.entero("Porcentaje de propina", 0, 100) / 100.0);
 		}
-		ofrecerPuntos(venta);
+		if (!ofrecerBono(venta)) {
+			ofrecerPuntos(venta);
+		}
 		Instalacion dondeEsta = null;
 		if (venta.tieneBebidaCaliente()) {
 			System.out.println("El pedido tiene una bebida caliente: indique donde la va a recibir.");
 			dondeEsta = consola.elegirInstalacion(consola.instalaciones());
 		}
 		System.out.println("Subtotal: " + ConsolaBase.pesos(venta.subtotal()));
+		mostrarBono(venta);
 		System.out.println("Impoconsumo (8%): " + ConsolaBase.pesos(venta.impuesto()));
 		System.out.println("Propina: " + ConsolaBase.pesos(venta.cargosAdicionales()));
 		System.out.println("Puntos redimidos: -" + venta.getPuntosRedimidos());
@@ -162,6 +170,45 @@ public class MenuCompras {
 			texto += " alergenos: " + p.getAlergenos();
 		}
 		return texto;
+	}
+
+	/**
+	 * Ofrece usar un bono ganado en un torneo recreativo. El bono no se acumula con
+	 * otros descuentos, asi que si se usa ya no se preguntan codigo ni puntos.
+	 * @return true si se aplico un bono
+	 */
+	private boolean ofrecerBono(Venta venta) throws ReglaNegocioException {
+		List<Bono> bonos = consola.club.bonosDisponibles(consola.usuario);
+		if (bonos.isEmpty()) {
+			return false;
+		}
+		if (!consola.entrada.siNo("Tiene " + bonos.size() + " bono(s) de torneo. Usar uno? (no se acumula con codigos ni puntos)")) {
+			return false;
+		}
+		Bono bono = consola.entrada.elegir("Bonos", bonos, MenuCompras::describir);
+		venta.aplicarBono(bono);
+		return true;
+	}
+
+	private static String describir(Bono b) {
+		return b.getPorcentaje() + "% de descuento (ganado en " + b.getOrigen() + ")";
+	}
+
+	private static void mostrarBono(Venta venta) {
+		if (venta.getBono() != null) {
+			System.out.println("Bono " + venta.getBono().getPorcentaje() + "%: -" + ConsolaBase.pesos(venta.descuentoBono()));
+		}
+	}
+
+	private void verBonos() {
+		List<Bono> bonos = consola.club.bonosDisponibles(consola.usuario);
+		if (bonos.isEmpty()) {
+			System.out.println("No tiene bonos disponibles. Se ganan quedando primero en un torneo recreativo.");
+			return;
+		}
+		for (Bono b : bonos) {
+			System.out.println("- " + describir(b));
+		}
 	}
 
 	private void terminarBebida() {

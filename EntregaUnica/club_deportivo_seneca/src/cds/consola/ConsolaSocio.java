@@ -1,11 +1,11 @@
 package cds.consola;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import cds.Club;
 import cds.ReglaNegocioException;
 import cds.academias.Academia;
 import cds.academias.InscripcionAcademia;
@@ -18,6 +18,8 @@ import cds.conjunto.Equipo;
 import cds.entrenamiento.Asistencia;
 import cds.entrenamiento.SesionEntrenamiento;
 import cds.partidos.Partido;
+import cds.usuarios.Estudiante;
+import cds.usuarios.Externo;
 import cds.usuarios.RestriccionMedica;
 import cds.usuarios.Socio;
 import cds.usuarios.Usuario;
@@ -32,12 +34,12 @@ public class ConsolaSocio extends ConsolaBase {
 
 	@Override
 	protected boolean aceptaUsuario(Usuario u) {
-		return u instanceof Socio;
+		return u instanceof Socio || u instanceof Estudiante || u instanceof Externo;
 	}
 
 	@Override
 	protected String nombreRol() {
-		return "Socio";
+		return "Socio / Jugador";
 	}
 
 	private Socio socio() {
@@ -46,6 +48,9 @@ public class ConsolaSocio extends ConsolaBase {
 
 	@Override
 	protected Menu construirMenu() {
+		if (!(usuario instanceof Socio)) {
+			return menuParticipanteExterno();
+		}
 		Menu academias = new Menu("Academias", entrada)
 				.agregar("Ver mi ranking y su evolucion", this::verRanking)
 				.agregar("Reservar una instalacion", this::reservar)
@@ -63,6 +68,29 @@ public class ConsolaSocio extends ConsolaBase {
 		menu.agregar("Ver y pagar mensualidades", this::mensualidades);
 		menu.agregarSubmenu("Torneos", new MenuTorneosJugador(this).construir());
 		return menu;
+	}
+
+	/**
+	 * Estudiantes de la universidad y personas externas: solo participan en torneos
+	 * (y pueden comprar en la tienda y la cafeteria).
+	 */
+	private Menu menuParticipanteExterno() {
+		String tipo = usuario instanceof Estudiante ? "Estudiante" : "Externo";
+		Menu menu = new Menu(tipo + " - " + usuario.getNombre(), entrada);
+		menu.agregar("Ver mi perfil", this::verPerfilParticipante);
+		menu.agregarSubmenu("Torneos", new MenuTorneosJugador(this).construir());
+		menu.agregarSubmenu("Tienda y cafeteria", new MenuCompras(this).construir());
+		return menu;
+	}
+
+	private void verPerfilParticipante() {
+		if (usuario instanceof Estudiante) {
+			System.out.println("Estudiante: " + usuario.getNombre() + " | Codigo: " + ((Estudiante) usuario).getCodigoEstudiantil());
+		} else {
+			System.out.println("Externo: " + usuario.getNombre() + " | Documento: " + ((Externo) usuario).getDocumento());
+		}
+		System.out.println("Puntos de fidelidad: " + usuario.getPuntosFidelidad());
+		System.out.println("Bonos disponibles: " + club.bonosDisponibles(usuario).size());
 	}
 
 	private void verPerfil() {
@@ -134,20 +162,11 @@ public class ConsolaSocio extends ConsolaBase {
 		Academia a = elegirAcademia(misAcademias());
 		Instalacion inst = elegirInstalacion(a.getInstalaciones());
 		LocalDate fecha = entrada.fechaOHoy("Fecha");
-		if (fecha.isBefore(hoy())) {
-			throw new ReglaNegocioException("No se puede reservar en una fecha pasada");
-		}
 		LocalTime inicio = entrada.hora("Hora de inicio");
 		LocalTime fin = entrada.hora("Hora de fin");
-		if (fecha.equals(hoy()) && inicio.isBefore(LocalTime.now())) {
-			throw new ReglaNegocioException("Esa hora ya paso");
-		}
-		if (inicio.isBefore(Club.APERTURA) || fin.isAfter(Club.CIERRE)) {
-			throw new ReglaNegocioException("El club atiende de " + Club.APERTURA + " a " + Club.CIERRE);
-		}
 		Modalidad modalidad = entrada.elegirEnum("Modalidad", Modalidad.values());
 		int jugadores = entrada.entero("Numero de jugadores", 1, 4);
-		a.reservar(inst, socio(), fecha, inicio, fin, jugadores, modalidad);
+		club.reservar(a, inst, socio(), fecha, inicio, fin, jugadores, modalidad, LocalDateTime.now());
 		System.out.println("Reserva registrada: " + inst.getNombre() + " el " + fecha + " de " + inicio + " a " + fin);
 	}
 

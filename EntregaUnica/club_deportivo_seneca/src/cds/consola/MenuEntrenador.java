@@ -268,10 +268,6 @@ public class MenuEntrenador {
 		System.out.println("Alineacion registrada con " + alineacion.size() + " jugadores.");
 		registro.estadisticasConjunto(partido, partido.getDeporte());
 		registro.finalizar(partido, equipo.getNombre(), partido.getInstitucionRival());
-		// PartidoCompetencia no tiene asignada su competencia, asi que la tabla se actualiza aqui
-		if (partido.getComeptencia() == null) {
-			partido.getNomina().getCompetencia().registrarResultado(partido);
-		}
 	}
 
 	private void verTabla() throws ReglaNegocioException {

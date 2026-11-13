@@ -6,10 +6,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import cds.Club;
 import cds.ReglaNegocioException;
 import cds.usuarios.Empleado;
 import cds.usuarios.Entrenador;
+import cds.usuarios.Estudiante;
+import cds.usuarios.Externo;
 import cds.usuarios.EstadoSolicitud;
 import cds.usuarios.Fisioterapeuta;
 import cds.usuarios.SolicitudCambioTurno;
@@ -31,6 +32,7 @@ public class MenuAdminPersonal {
 		return new Menu("Usuarios y turnos", entrada)
 				.agregar("Registrar socio", this::registrarSocio)
 				.agregar("Registrar empleado (entrenador o fisioterapeuta)", this::registrarEmpleado)
+				.agregar("Registrar estudiante de la universidad o persona externa (para torneos)", this::registrarParticipante)
 				.agregar("Ver usuarios", this::verUsuarios)
 				.agregar("Dar de baja a un socio", this::darDeBaja)
 				.agregar("Asignar turno a un empleado", this::asignarTurno)
@@ -74,15 +76,23 @@ public class MenuAdminPersonal {
 		String password = entrada.texto("Password");
 		String nombre = entrada.texto("Nombre completo");
 		String codigo = entrada.texto("Codigo de descuento");
-		for (Empleado e : consola.empleados()) {
-			if (codigo.equalsIgnoreCase(e.getCodigoDescuento())) {
-				throw new ReglaNegocioException("El codigo " + codigo + " ya lo tiene " + e.getNombre());
-			}
-		}
 		Empleado empleado = esEntrenador ? new Entrenador(login, password, nombre, codigo)
 				: new Fisioterapeuta(login, password, nombre, codigo);
 		consola.club.registrarUsuario(empleado);
 		System.out.println("Empleado " + nombre + " registrado. Recuerde asignarle turnos.");
+	}
+
+	/** Estudiantes y externos solo participan en torneos; entran por la consola de socio / jugador. */
+	private void registrarParticipante() throws ReglaNegocioException {
+		boolean estudiante = entrada.siNo("Es estudiante de la universidad? (n = persona externa)");
+		String login = loginNuevo();
+		String password = entrada.texto("Password");
+		String nombre = entrada.texto("Nombre completo");
+		Usuario nuevo = estudiante ? new Estudiante(login, password, nombre, entrada.texto("Codigo estudiantil"))
+				: new Externo(login, password, nombre, entrada.texto("Documento"));
+		consola.club.registrarUsuario(nuevo);
+		System.out.println((estudiante ? "Estudiante " : "Externo ") + nombre
+				+ " registrado. Ya puede entrar a la consola de socio / jugador para inscribirse en torneos.");
 	}
 
 	private void verUsuarios() {
@@ -115,13 +125,7 @@ public class MenuAdminPersonal {
 		DayOfWeek dia = entrada.elegirEnum("Dia", DayOfWeek.values());
 		LocalTime inicio = entrada.hora("Hora de inicio");
 		LocalTime fin = entrada.hora("Hora de fin");
-		if (!fin.isAfter(inicio)) {
-			throw new ReglaNegocioException("La hora de fin debe ser posterior a la de inicio");
-		}
-		if (inicio.isBefore(Club.APERTURA) || fin.isAfter(Club.CIERRE)) {
-			throw new ReglaNegocioException("El club atiende de " + Club.APERTURA + " a " + Club.CIERRE);
-		}
-		consola.club.registrarTurno(new Turno(e, dia, inicio, fin));
+		consola.club.asignarTurno(e, dia, inicio, fin);
 		System.out.println("Turno asignado a " + e.getNombre() + ".");
 	}
 

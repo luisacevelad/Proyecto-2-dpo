@@ -3,12 +3,17 @@ package cds;
 import java.time.DayOfWeek;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
 import cds.academias.Academia;
 import cds.academias.InscripcionAcademia;
+import cds.academias.Instalacion;
+import cds.academias.Modalidad;
+import cds.academias.Reserva;
 import cds.academias.RegistroRanking;
 import cds.competencias.Competencia;
 import cds.entrenamiento.Asistencia;
@@ -30,6 +35,7 @@ import cds.conjunto.PartidoInterno;
 import cds.partidos.Partido;
 import cds.ventas.Mensualidad;
 import cds.ventas.Rubro;
+import cds.ventas.ResumenVentas;
 import cds.ventas.TiendaCafeteria;
 import cds.ventas.Venta;
 import cds.torneos.EstadoTorneo;
@@ -75,7 +81,26 @@ public class Club {
 		if (buscarUsuario(u.getLogin()) != null) {
 			throw new ReglaNegocioException("Ya existe un usuario con el login " + u.getLogin());
 		}
+		if (u instanceof Empleado) {
+			Empleado otro = buscarEmpleadoPorCodigo(((Empleado) u).getCodigoDescuento());
+			if (otro != null) {
+				throw new ReglaNegocioException("El codigo de descuento " + otro.getCodigoDescuento() + " ya lo tiene " + otro.getNombre());
+			}
+		}
 		usuarios.add(u);
+	}
+
+	/** Empleado dueno de un codigo de descuento (sin importar mayusculas), o null si no existe. */
+	public Empleado buscarEmpleadoPorCodigo(String codigo) {
+		if (codigo == null) {
+			return null;
+		}
+		for (Usuario u : usuarios) {
+			if (u instanceof Empleado && codigo.equalsIgnoreCase(((Empleado) u).getCodigoDescuento())) {
+				return (Empleado) u;
+			}
+		}
+		return null;
 	}
 
 	public Usuario buscarUsuario(String login) {
@@ -344,6 +369,93 @@ public class Club {
 
 	public List<SolicitudCambioTurno> getSolicitudes() {
 		return solicitudes;
+	}
+
+	// ------------------------------------------------------------------
+	// Reglas de operacion que usan las consolas (Proyecto 2)
+	// ------------------------------------------------------------------
+
+	/** Valida que un horario este dentro de la atencion del club y que la hora de fin sea posterior. */
+	private void validarHorarioClub(LocalTime inicio, LocalTime fin) throws ReglaNegocioException {
+		if (!fin.isAfter(inicio)) {
+			throw new ReglaNegocioException("La hora de fin debe ser posterior a la hora de inicio");
+		}
+		if (inicio.isBefore(APERTURA) || fin.isAfter(CIERRE)) {
+			throw new ReglaNegocioException("El club atiende de " + APERTURA + " a " + CIERRE);
+		}
+	}
+
+	/**
+	 * Reserva una instalacion de una academia. Ademas de las reglas de la academia,
+	 * exige que no sea en el pasado y que este dentro del horario del club.
+	 */
+	public Reserva reservar(Academia academia, Instalacion instalacion, Socio socio, LocalDate fecha, LocalTime inicio,
+			LocalTime fin, int jugadores, Modalidad modalidad, LocalDateTime ahora) throws ReglaNegocioException {
+		if (fecha.isBefore(ahora.toLocalDate()) || (fecha.equals(ahora.toLocalDate()) && inicio.isBefore(ahora.toLocalTime()))) {
+			throw new ReglaNegocioException("No se puede reservar en una fecha u hora que ya paso");
+		}
+		validarHorarioClub(inicio, fin);
+		return academia.reservar(instalacion, socio, fecha, inicio, fin, jugadores, modalidad);
+	}
+
+	/** Crea y registra un turno validando el horario del club. */
+	public Turno asignarTurno(Empleado empleado, DayOfWeek dia, LocalTime inicio, LocalTime fin) throws ReglaNegocioException {
+		validarHorarioClub(inicio, fin);
+		Turno turno = new Turno(empleado, dia, inicio, fin);
+		registrarTurno(turno);
+		return turno;
+	}
+
+	/** Agrega una instalacion a una academia; el nombre no se puede repetir en todo el club. */
+	public void agregarInstalacion(Academia academia, Instalacion instalacion) throws ReglaNegocioException {
+		for (Academia a : academias) {
+			for (Instalacion i : a.getInstalaciones()) {
+				if (i.getNombre().equalsIgnoreCase(instalacion.getNombre())) {
+					throw new ReglaNegocioException("Ya existe una instalacion llamada " + instalacion.getNombre());
+				}
+			}
+		}
+		academia.agregarInstalacion(instalacion);
+	}
+
+	/** Genera el cobro mensual de un socio; no puede haber dos cobros del mismo mes. */
+	public Mensualidad generarMensualidad(Socio socio, YearMonth mes, double monto) throws ReglaNegocioException {
+		for (Mensualidad m : tienda.getMensualidades()) {
+			if (m.getSocio() == socio && m.getMes().equals(mes)) {
+				throw new ReglaNegocioException(socio.getNombre() + " ya tiene la mensualidad de " + mes);
+			}
+		}
+		if (monto <= 0) {
+			throw new ReglaNegocioException("El monto de la mensualidad debe ser mayor que 0");
+		}
+		Mensualidad mensualidad = new Mensualidad(socio, mes, monto);
+		tienda.registrarMensualidad(mensualidad);
+		return mensualidad;
+	}
+
+	/** Cantidad, total, impuestos y propinas de un rubro en un periodo (para el reporte de ingresos). */
+	public ResumenVentas resumenVentas(Rubro rubro, LocalDate desde, LocalDate hasta) throws ReglaNegocioException {
+		if (hasta.isBefore(desde)) {
+			throw new ReglaNegocioException("La fecha final no puede ser anterior a la inicial");
+		}
+		int cantidad = 0;
+		double impuestos = 0;
+		double propinas = 0;
+		for (Venta v : tienda.getVentas()) {
+			if (v.getRubro() == rubro && v.isConfirmada() && !v.getFecha().isBefore(desde) && !v.getFecha().isAfter(hasta)) {
+				cantidad++;
+				impuestos += v.impuesto();
+				propinas += v.cargosAdicionales();
+			}
+		}
+		if (rubro == Rubro.MENSUALIDAD) {
+			for (Mensualidad m : tienda.getMensualidades()) {
+				if (m.isPagada() && !m.getFechaPago().isBefore(desde) && !m.getFechaPago().isAfter(hasta)) {
+					cantidad++;
+				}
+			}
+		}
+		return new ResumenVentas(rubro, cantidad, totalVentas(rubro, desde, hasta), impuestos, propinas);
 	}
 
 	// ------------------------------------------------------------------

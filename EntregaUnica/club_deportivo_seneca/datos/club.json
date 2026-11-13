@@ -337,6 +337,24 @@
       "activo": true,
       "entrenador": false,
       "restricciones": []
+    },
+    {
+      "login": "sebas",
+      "password": "sebas123",
+      "nombre": "Sebastian Uribe",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "ESTUDIANTE",
+      "codigoEstudiantil": "202412345"
+    },
+    {
+      "login": "pablo",
+      "password": "pablo123",
+      "nombre": "Pablo Rivas",
+      "puntosFidelidad": 0,
+      "tieneBebidaCaliente": false,
+      "tipo": "EXTERNO",
+      "documento": "CC 1020304050"
     }
   ],
   "equipos": [
@@ -1023,6 +1041,7 @@
         "puntosProcesados": true,
         "total": 93058.0,
         "puntosGenerados": 1861,
+        "bono": null,
         "duenoCodigo": "leo",
         "lineas": [
           {
@@ -1042,6 +1061,7 @@
         "puntosProcesados": true,
         "total": 11800.0,
         "puntosGenerados": 236,
+        "bono": null,
         "porcentajePropina": 0.1,
         "lineas": [
           {
@@ -1238,6 +1258,7 @@
     {
       "tipo": "RECREATIVO",
       "porcentajeBono": 15.0,
+      "bonosEntregados": [],
       "nombre": "Copa Recreativa Tenis de Mesa",
       "especialidad": {
         "tipo": "INDIVIDUAL",
@@ -1294,6 +1315,7 @@
     {
       "tipo": "COMPETITIVO",
       "tarifa": 50000.0,
+      "premiosEntregados": [],
       "nombre": "Abierto Competitivo de Tenis",
       "especialidad": {
         "tipo": "INDIVIDUAL",
@@ -1315,6 +1337,24 @@
           "fecha": "2026-11-11",
           "preferencial": true,
           "montoPagado": 50000.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "sebas"
+          },
+          "fecha": "2026-11-12",
+          "preferencial": false,
+          "montoPagado": 50000.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "pablo"
+          },
+          "fecha": "2026-11-12",
+          "preferencial": false,
+          "montoPagado": 50000.0
         }
       ],
       "encuentros": [],
@@ -1323,6 +1363,7 @@
     {
       "tipo": "COMPETITIVO",
       "tarifa": 200000.0,
+      "premiosEntregados": [],
       "nombre": "Copa Competitiva de Futbol",
       "especialidad": {
         "tipo": "CONJUNTO",
@@ -1351,6 +1392,7 @@
     {
       "tipo": "RECREATIVO",
       "porcentajeBono": 10.0,
+      "bonosEntregados": [],
       "nombre": "Liga Recreativa de Tenis",
       "especialidad": {
         "tipo": "INDIVIDUAL",
@@ -1426,6 +1468,18 @@
     {
       "tipo": "RECREATIVO",
       "porcentajeBono": 20.0,
+      "bonosEntregados": [
+        {
+          "dueno": "carlos",
+          "porcentaje": 20.0,
+          "usado": false
+        },
+        {
+          "dueno": "diana",
+          "porcentaje": 20.0,
+          "usado": false
+        }
+      ],
       "nombre": "Torneo Recreativo de Padel Dobles",
       "especialidad": {
         "tipo": "INDIVIDUAL",
@@ -1497,6 +1551,87 @@
           "jugado": true,
           "marcadorA": 2,
           "marcadorB": 1
+        }
+      ],
+      "ganador": 0
+    },
+    {
+      "tipo": "COMPETITIVO",
+      "tarifa": 20000.0,
+      "premiosEntregados": [
+        {
+          "usuario": "felipe",
+          "monto": 40000.0
+        }
+      ],
+      "nombre": "Copa Relampago de Tenis de Mesa",
+      "especialidad": {
+        "tipo": "INDIVIDUAL",
+        "disciplina": "TENIS_MESA",
+        "nivel": "INTERMEDIO",
+        "dobles": false
+      },
+      "cupos": 4,
+      "fechaInicio": "2026-11-05",
+      "fechaLimitePreferencial": "2026-11-01",
+      "estado": "FINALIZADO",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "felipe"
+          },
+          "fecha": "2026-10-30",
+          "preferencial": true,
+          "montoPagado": 20000.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "mateo"
+          },
+          "fecha": "2026-10-30",
+          "preferencial": false,
+          "montoPagado": 20000.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "max"
+          },
+          "fecha": "2026-10-30",
+          "preferencial": false,
+          "montoPagado": 0.0
+        }
+      ],
+      "encuentros": [
+        {
+          "participanteA": 0,
+          "participanteB": 1,
+          "fecha": "2026-11-05",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 3,
+          "marcadorB": 1
+        },
+        {
+          "participanteA": 0,
+          "participanteB": 2,
+          "fecha": "2026-11-05",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 3,
+          "marcadorB": 1
+        },
+        {
+          "participanteA": 1,
+          "participanteB": 2,
+          "fecha": "2026-11-05",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 1,
+          "marcadorB": 3
         }
       ],
       "ganador": 0
