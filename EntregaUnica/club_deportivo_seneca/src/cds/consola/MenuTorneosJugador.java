@@ -16,6 +16,7 @@ import cds.torneos.Participante;
 import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.usuarios.Administrador;
+import cds.usuarios.Empleado;
 import cds.usuarios.Usuario;
 import cds.ventas.Bono;
 
@@ -91,7 +92,11 @@ public class MenuTorneosJugador {
 	private void inscribirme() throws ReglaNegocioException {
 		Torneo torneo = elegir(abiertos());
 		Participante participante = armarParticipante(torneo);
-		if (torneo instanceof TorneoCompetitivo && !entrada.siNo(costo(torneo) + ". Confirmar inscripcion?")) {
+		String aviso = "Inscripcion: " + ConsolaBase.pesos(torneo.tarifaPara(participante));
+		if (participante.getIntegrantes().stream().anyMatch(u -> u instanceof Empleado)) {
+			aviso += " (los empleados no pagan y no reciben premio en efectivo)";
+		}
+		if (torneo instanceof TorneoCompetitivo && !entrada.siNo(aviso + ". Confirmar inscripcion?")) {
 			System.out.println("Inscripcion cancelada.");
 			return;
 		}

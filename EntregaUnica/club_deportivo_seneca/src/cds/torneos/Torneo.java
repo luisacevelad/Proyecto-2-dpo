@@ -60,7 +60,7 @@ public abstract class Torneo {
 
 	public abstract String getTipo();
 
-	protected abstract double tarifaPara(Participante p);
+	public abstract double tarifaPara(Participante p);
 
 	public abstract String describirPremio();
 

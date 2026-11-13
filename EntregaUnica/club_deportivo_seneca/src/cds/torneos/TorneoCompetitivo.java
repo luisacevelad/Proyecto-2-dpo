@@ -33,7 +33,7 @@ public class TorneoCompetitivo extends Torneo {
 	}
 
 	@Override
-	protected double tarifaPara(Participante participante) {
+	public double tarifaPara(Participante participante) {
 		List<Usuario> integrantes = participante.getIntegrantes();
 		if (integrantes.isEmpty()) {
 			return tarifa;

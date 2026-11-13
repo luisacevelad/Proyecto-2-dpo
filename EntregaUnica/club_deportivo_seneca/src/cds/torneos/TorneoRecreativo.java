@@ -31,7 +31,7 @@ public class TorneoRecreativo extends Torneo {
 	}
 
 	@Override
-	protected double tarifaPara(Participante p) {
+	public double tarifaPara(Participante p) {
 		return 0;
 	}
 
