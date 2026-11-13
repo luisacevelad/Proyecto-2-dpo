@@ -4,11 +4,6 @@ import java.time.LocalDate;
 
 import cds.ReglaNegocioException;
 
-/**
- * Un partido dentro de un torneo, entre dos participantes inscritos.
- * No reutiliza Partido del Proyecto 1 porque ese trabaja con Socio y con
- * equipos local/visitante, y aqui pueden jugar jugadores, parejas o equipos.
- */
 public class EncuentroTorneo {
 	private final InscripcionTorneo participanteA;
 	private final InscripcionTorneo participanteB;
@@ -45,14 +40,12 @@ public class EncuentroTorneo {
 		jugado = true;
 	}
 
-	/** Usado por la persistencia para restaurar un encuentro ya jugado. */
 	public void restaurarResultado(int marcadorA, int marcadorB) {
 		this.marcadorA = marcadorA;
 		this.marcadorB = marcadorB;
 		jugado = true;
 	}
 
-	/** Ganador del encuentro, o null si no se ha jugado o fue empate. */
 	public InscripcionTorneo getGanador() {
 		if (!jugado || marcadorA == marcadorB) {
 			return null;

@@ -2,9 +2,6 @@ package cds.torneos;
 
 import java.time.LocalDate;
 
-/**
- * Registro de que un participante ocupa un cupo en un torneo.
- */
 public class InscripcionTorneo {
 	private final Participante participante;
 	private final LocalDate fecha;
@@ -26,7 +23,6 @@ public class InscripcionTorneo {
 		return fecha;
 	}
 
-	/** true si ocupa uno de los cupos reservados por ranking. */
 	public boolean isPreferencial() {
 		return preferencial;
 	}

@@ -10,16 +10,9 @@ import cds.ReglaNegocioException;
 import cds.usuarios.Socio;
 import cds.usuarios.Usuario;
 
-/**
- * Torneo interno del club.
- *
- * Herencia: Recreativo / Competitivo (cambian la tarifa y el premio).
- * Composicion: Especialidad (conjunto o individual/dobles, con su categoria).
- *
- * Ciclo de vida: INSCRIPCIONES_ABIERTAS -> EN_CURSO -> FINALIZADO.
- */
+
 public abstract class Torneo {
-	/** Porcentaje de cupos reservado para los mejores del ranking. */
+
 	public static final int PORCENTAJE_PREFERENCIAL = 20;
 
 	private final String nombre;
@@ -33,11 +26,6 @@ public abstract class Torneo {
 	private final List<EncuentroTorneo> encuentros;
 	private InscripcionTorneo ganador;
 
-	/**
-	 * @param fechaLimitePreferencial ultimo dia en que los cupos preferenciales
-	 *        siguen reservados. Despues de ese dia, los que no se llenaron pasan a
-	 *        ser cupos regulares.
-	 */
 	protected Torneo(String nombre, Especialidad especialidad, int cupos, LocalDate fechaInicio,
 			LocalDate fechaLimitePreferencial) throws ReglaNegocioException {
 		if (nombre == null || nombre.isBlank()) {
@@ -67,32 +55,18 @@ public abstract class Torneo {
 		ganador = null;
 	}
 
-	// ------------------------------------------------------------------
-	// Lo que cambia entre Recreativo y Competitivo (polimorfismo)
-	// ------------------------------------------------------------------
-
-	/** "Recreativo" o "Competitivo". */
 	public abstract String getTipo();
 
-	/** Cuanto paga este participante por inscribirse. */
 	protected abstract double tarifaPara(Participante p);
 
-	/** Texto del premio, para mostrar en consola. */
 	public abstract String describirPremio();
 
-	/** Se llama una sola vez, al finalizar el torneo. */
 	protected abstract void entregarPremio(InscripcionTorneo ganador) throws ReglaNegocioException;
 
-	// ------------------------------------------------------------------
-	// Cupos
-	// ------------------------------------------------------------------
-
-	/** 20% de los cupos redondeado hacia arriba: ceil(cupos / 5). */
 	public int getCuposPreferenciales() {
 		return (cupos * PORCENTAJE_PREFERENCIAL + 99) / 100;
 	}
 
-	/** true mientras los cupos preferenciales sigan reservados. */
 	public boolean preferencialesVigentes(LocalDate hoy) {
 		return !preferencialesLiberados && !hoy.isAfter(fechaLimitePreferencial);
 	}
@@ -122,7 +96,7 @@ public abstract class Torneo {
 		if (preferencialesVigentes(hoy)) {
 			return cupos - getCuposPreferenciales() - contarRegularesOcupados();
 		}
-		// Ya se liberaron: todo lo que quede libre es regular
+
 		return cupos - inscripciones.size();
 	}
 
@@ -130,7 +104,6 @@ public abstract class Torneo {
 		return cupos - inscripciones.size();
 	}
 
-	/** El administrador libera antes de tiempo los cupos preferenciales que no se llenaron. */
 	public void liberarCuposPreferenciales() throws ReglaNegocioException {
 		if (estado != EstadoTorneo.INSCRIPCIONES_ABIERTAS) {
 			throw new ReglaNegocioException("Las inscripciones de " + nombre + " ya cerraron");
@@ -138,21 +111,12 @@ public abstract class Torneo {
 		preferencialesLiberados = true;
 	}
 
-	// ------------------------------------------------------------------
-	// Inscripcion y desinscripcion
-	// ------------------------------------------------------------------
 
 	public boolean inscripcionesAbiertas(LocalDate hoy) {
 		return estado == EstadoTorneo.INSCRIPCIONES_ABIERTAS && hoy.isBefore(fechaInicio);
 	}
 
-	/**
-	 * Inscribe a un participante.
-	 *
-	 * @param tieneRankingPreferencial true si el participante esta entre los
-	 *        mejores del ranking de la categoria (lo calcula RankingTorneos).
-	 * @return la inscripcion creada
-	 */
+
 	public InscripcionTorneo inscribir(Participante p, LocalDate hoy, boolean tieneRankingPreferencial)
 			throws ReglaNegocioException {
 		if (!inscripcionesAbiertas(hoy)) {
@@ -184,7 +148,7 @@ public abstract class Torneo {
 			if (buscarInscripcion(u) != null) {
 				throw new ReglaNegocioException(u.getNombre() + " ya esta inscrito en " + nombre);
 			}
-			if (u instanceof Socio && !((Socio) u).estaHabilitado()) {
+			if (!(p instanceof EquipoTorneo) && u instanceof Socio && !((Socio) u).estaHabilitado()) {
 				throw new ReglaNegocioException(u.getNombre() + " no esta habilitado (inactivo o con restriccion medica)");
 			}
 		}
@@ -198,7 +162,6 @@ public abstract class Torneo {
 		}
 	}
 
-	/** Saca una inscripcion y libera su cupo. Solo antes de que el torneo inicie. */
 	public void desinscribir(InscripcionTorneo inscripcion, LocalDate hoy) throws ReglaNegocioException {
 		if (!inscripcionesAbiertas(hoy)) {
 			throw new ReglaNegocioException("No es posible salirse: " + nombre + " ya inicio");
@@ -208,7 +171,6 @@ public abstract class Torneo {
 		}
 	}
 
-	/** Inscripcion en la que juega este usuario, o null si no esta inscrito. */
 	public InscripcionTorneo buscarInscripcion(Usuario u) {
 		for (InscripcionTorneo i : inscripciones) {
 			if (i.getParticipante().incluye(u)) {
@@ -226,10 +188,6 @@ public abstract class Torneo {
 		}
 		return null;
 	}
-
-	// ------------------------------------------------------------------
-	// Desarrollo del torneo
-	// ------------------------------------------------------------------
 
 	public void iniciar(LocalDate hoy) throws ReglaNegocioException {
 		if (estado != EstadoTorneo.INSCRIPCIONES_ABIERTAS) {
@@ -258,7 +216,6 @@ public abstract class Torneo {
 		return e;
 	}
 
-	/** Programa todos contra todos (formato liga / mini-campeonato). */
 	public List<EncuentroTorneo> generarTodosContraTodos(LocalDate fecha) throws ReglaNegocioException {
 		validarEnCurso();
 		if (!encuentros.isEmpty()) {
@@ -281,11 +238,6 @@ public abstract class Torneo {
 		e.registrarResultado(marcadorA, marcadorB, especialidad.permiteEmpate());
 	}
 
-	/**
-	 * Tabla ordenada por puntos, luego diferencia, luego anotados a favor.
-	 * Sirve para liga (todos contra todos) y para eliminacion directa
-	 * (el campeon es el que mas partidos gano).
-	 */
 	public List<Posicion> tablaPosiciones() {
 		List<Posicion> tabla = new ArrayList<Posicion>();
 		for (InscripcionTorneo i : inscripciones) {
@@ -337,10 +289,6 @@ public abstract class Torneo {
 		}
 	}
 
-	// ------------------------------------------------------------------
-	// Para la persistencia (ArchivoClub): reconstruir sin validar reglas
-	// ------------------------------------------------------------------
-
 	public void restaurarInscripcion(InscripcionTorneo i) {
 		inscripciones.add(i);
 	}
@@ -355,9 +303,6 @@ public abstract class Torneo {
 		this.ganador = ganador;
 	}
 
-	// ------------------------------------------------------------------
-	// Getters
-	// ------------------------------------------------------------------
 
 	public String getNombre() {
 		return nombre;
@@ -399,7 +344,6 @@ public abstract class Torneo {
 		return new ArrayList<EncuentroTorneo>(encuentros);
 	}
 
-	/** null mientras el torneo no haya finalizado. */
 	public InscripcionTorneo getGanador() {
 		return ganador;
 	}

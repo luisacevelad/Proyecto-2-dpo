@@ -1,19 +1,17 @@
 package cds.torneos;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import cds.ReglaNegocioException;
+import cds.usuarios.Usuario;
+import cds.ventas.Bono;
 
-/**
- * Torneo sin costo de inscripcion. El ganador recibe un bono de descuento
- * redimible en la tienda o la cafeteria.
- */
 public class TorneoRecreativo extends Torneo {
 	private final double porcentajeBono;
+	private final List<Bono> bonosEntregados;
 
-	/**
-	 * @param porcentajeBono descuento del bono, entre 1 y 100 (p. ej. 20 = 20%).
-	 */
 	public TorneoRecreativo(String nombre, Especialidad especialidad, int cupos, LocalDate fechaInicio,
 			LocalDate fechaLimitePreferencial, double porcentajeBono) throws ReglaNegocioException {
 		super(nombre, especialidad, cupos, fechaInicio, fechaLimitePreferencial);
@@ -21,6 +19,7 @@ public class TorneoRecreativo extends Torneo {
 			throw new ReglaNegocioException("El porcentaje del bono debe estar entre 1 y 100");
 		}
 		this.porcentajeBono = porcentajeBono;
+		bonosEntregados = new ArrayList<Bono>();
 	}
 
 	@Override
@@ -40,8 +39,17 @@ public class TorneoRecreativo extends Torneo {
 
 	@Override
 	protected void entregarPremio(InscripcionTorneo ganador) throws ReglaNegocioException {
-		// TODO (Persona B): crear un Bono de porcentajeBono para cada integrante
-		// del ganador que sea Socio y guardarlo en su lista de bonos.
+		for (Usuario u : ganador.getParticipante().getIntegrantes()) {
+			bonosEntregados.add(new Bono(u, porcentajeBono, getNombre()));
+		}
+	}
+
+	public void restaurarBono(Bono b) {
+		bonosEntregados.add(b);
+	}
+
+	public List<Bono> getBonosEntregados() {
+		return new ArrayList<Bono>(bonosEntregados);
 	}
 
 	public double getPorcentajeBono() {

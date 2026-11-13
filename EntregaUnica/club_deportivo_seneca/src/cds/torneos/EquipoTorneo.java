@@ -7,10 +7,6 @@ import cds.conjunto.Equipo;
 import cds.conjunto.MiembroEquipo;
 import cds.usuarios.Usuario;
 
-/**
- * Adaptador: deja usar un Equipo del Proyecto 1 como participante de torneo
- * sin tener que modificar la clase Equipo.
- */
 public class EquipoTorneo implements Participante {
 	private final Equipo equipo;
 

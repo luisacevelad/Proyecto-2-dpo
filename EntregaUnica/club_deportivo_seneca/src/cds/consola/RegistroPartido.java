@@ -15,18 +15,12 @@ import cds.partidos.EstadisticaVoleibol;
 import cds.partidos.Partido;
 import cds.usuarios.Socio;
 
-/**
- * Pasos comunes para registrar cualquier partido por consola:
- * participantes, estadisticas y marcador final.
- */
 public class RegistroPartido {
 	private final Entrada entrada;
 
 	public RegistroPartido(Entrada entrada) {
 		this.entrada = entrada;
 	}
-
-	/** Agrega participantes uno a uno; si el modelo rechaza a alguno, se informa y se sigue. */
 	public void agregarParticipantes(Partido partido, List<Socio> candidatos, int maximo) throws ReglaNegocioException {
 		while (partido.getParticipantes().size() < maximo) {
 			List<Socio> libres = new ArrayList<Socio>(candidatos);
@@ -48,7 +42,6 @@ public class RegistroPartido {
 		}
 	}
 
-	/** Arma una lista de jugadores elegidos uno a uno, sin validarlos todavia. */
 	public List<Socio> elegirVarios(List<Socio> candidatos) throws ReglaNegocioException {
 		List<Socio> elegidos = new ArrayList<Socio>();
 		do {

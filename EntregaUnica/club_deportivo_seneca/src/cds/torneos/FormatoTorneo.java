@@ -1,8 +1,5 @@
 package cds.torneos;
 
-/**
- * Que tipo de participante se inscribe en el torneo.
- */
 public enum FormatoTorneo {
 	CONJUNTO("Deporte de conjunto", 0),
 	INDIVIDUAL("Individual", 1),
@@ -20,9 +17,6 @@ public enum FormatoTorneo {
 		return nombre;
 	}
 
-	/**
-	 * Numero de personas por participante. 0 significa "un equipo completo".
-	 */
 	public int getIntegrantes() {
 		return integrantes;
 	}
