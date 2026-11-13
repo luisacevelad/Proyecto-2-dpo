@@ -251,7 +251,7 @@ class ArchivoClubTest {
 
 			Club cargado = guardarYCargar(club);
 			TorneoCompetitivo copaCargada = (TorneoCompetitivo) cargado.buscarTorneo("Copa Relampago");
-			assertEquals(Double.valueOf(40000), copaCargada.getPremiosEntregados().get(cargado.buscarUsuario("carla")));
+			assertEquals(Double.valueOf(28000), copaCargada.getPremiosEntregados().get(cargado.buscarUsuario("carla")));
 			assertNull(copaCargada.getPremiosEntregados().get(cargado.buscarUsuario("dani")));
 		}
 	}

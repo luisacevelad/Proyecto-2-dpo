@@ -100,7 +100,7 @@ class HuAdm06ResultadosTest {
 	class CompetitivoSocio {
 
 		@Test
-		@DisplayName("el torneo finaliza y el socio recibe lo recaudado")
+		@DisplayName("el torneo finaliza y el socio recibe el 70% de lo recaudado")
 		void recibePremio() throws ReglaNegocioException {
 			TorneoCompetitivo t = new TorneoCompetitivo("Abierto", TENIS, 8, INICIO, LIMITE, 50000);
 			club.registrarTorneo(t);
@@ -112,7 +112,7 @@ class HuAdm06ResultadosTest {
 			assertEquals(EstadoTorneo.FINALIZADO, t.getEstado());
 			assertTrue(t.getGanador().getParticipante().incluye(lucho));
 			assertEquals(200000, t.totalRecaudado());
-			assertEquals(200000, t.getPremiosEntregados().get(lucho));
+			assertEquals(140000, t.getPremiosEntregados().get(lucho));
 		}
 	}
 
