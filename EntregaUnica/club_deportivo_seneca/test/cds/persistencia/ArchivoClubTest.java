@@ -38,12 +38,16 @@ import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Entrenador;
+import cds.usuarios.Estudiante;
+import cds.usuarios.Externo;
 import cds.usuarios.Socio;
+import cds.ventas.Bono;
+import cds.ventas.Venta;
 import cds.ventas.VentaTienda;
 
 /**
  * Persistencia: al guardar y volver a cargar club.json no se pierde informacion,
- * incluidos los torneos del Proyecto 2.
+ * incluidos los torneos, estudiantes, externos, bonos y premios del Proyecto 2.
  */
 @DisplayName("Persistencia en club.json")
 class ArchivoClubTest {
@@ -184,6 +188,71 @@ class ArchivoClubTest {
 			String primero = contenido();
 			ArchivoClub.guardar(ArchivoClub.cargar(carpeta.toString()), carpeta.toString());
 			assertEquals(primero, contenido());
+		}
+	}
+
+	@Nested
+	@DisplayName("Estudiantes, externos, bonos y premios (Proyecto 2)")
+	class ParticipantesYPremios {
+
+		@Test
+		@DisplayName("conserva estudiantes y externos con sus datos y pueden autenticarse")
+		void estudiantesYExternos() throws IOException, ReglaNegocioException {
+			club.registrarUsuario(new Estudiante("sebas", "s123", "Sebastian", "202412345"));
+			club.registrarUsuario(new Externo("pablo", "p123", "Pablo", "CC 1020"));
+			Club cargado = guardarYCargar(club);
+			Estudiante sebas = (Estudiante) cargado.autenticar("sebas", "s123");
+			assertEquals("202412345", sebas.getCodigoEstudiantil());
+			Externo pablo = (Externo) cargado.autenticar("pablo", "p123");
+			assertEquals("CC 1020", pablo.getDocumento());
+		}
+
+		@Test
+		@DisplayName("el ganador de un recreativo conserva su bono sin usar")
+		void bonoSinUsar() throws IOException, ReglaNegocioException {
+			Club cargado = guardarYCargar(club);
+			List<Bono> bonos = cargado.bonosDisponibles(cargado.buscarUsuario("ana"));
+			assertEquals(1, bonos.size());
+			assertEquals(15, bonos.get(0).getPorcentaje(), 0.001);
+			assertEquals("Liga de Tenis", bonos.get(0).getOrigen());
+		}
+
+		@Test
+		@DisplayName("una venta pagada con bono conserva su total y el bono queda usado")
+		void ventaConBono() throws IOException, ReglaNegocioException {
+			cds.usuarios.Usuario ana = club.buscarUsuario("ana");
+			VentaTienda venta = new VentaTienda(LocalDate.of(2026, 11, 12), ana);
+			venta.agregarLinea(club.getTienda().buscarArticulo("Balon"), 1);
+			venta.aplicarBono(club.bonosDisponibles(ana).get(0));
+			venta.confirmar();
+			club.getTienda().registrarVenta(venta);
+			double total = venta.total();
+
+			Club cargado = guardarYCargar(club);
+			Venta guardada = cargado.getTienda().getVentas().get(1);
+			assertNotNull(guardada.getBono());
+			assertTrue(guardada.getBono().isUsado());
+			assertEquals(total, guardada.total(), 0.001);
+			assertTrue(cargado.bonosDisponibles(cargado.buscarUsuario("ana")).isEmpty());
+		}
+
+		@Test
+		@DisplayName("conserva el premio en efectivo del ganador de un competitivo")
+		void premioEfectivo() throws IOException, ReglaNegocioException {
+			TorneoCompetitivo copa = new TorneoCompetitivo("Copa Relampago",
+					new EspecialidadIndividual(Disciplina.TENIS_MESA, Nivel.INTERMEDIO, false), 4, LocalDate.of(2026, 11, 5),
+					LocalDate.of(2026, 11, 1), 20000);
+			club.registrarTorneo(copa);
+			club.inscribirEnTorneo(copa, new JugadorTorneo(club.buscarUsuario("carla")), LocalDate.of(2026, 10, 30));
+			club.inscribirEnTorneo(copa, new JugadorTorneo(club.buscarUsuario("dani")), LocalDate.of(2026, 10, 30));
+			copa.iniciar(LocalDate.of(2026, 11, 5));
+			copa.registrarResultado(copa.generarTodosContraTodos(LocalDate.of(2026, 11, 5)).get(0), 3, 1);
+			copa.finalizar();
+
+			Club cargado = guardarYCargar(club);
+			TorneoCompetitivo copaCargada = (TorneoCompetitivo) cargado.buscarTorneo("Copa Relampago");
+			assertEquals(Double.valueOf(40000), copaCargada.getPremiosEntregados().get(cargado.buscarUsuario("carla")));
+			assertNull(copaCargada.getPremiosEntregados().get(cargado.buscarUsuario("dani")));
 		}
 	}
 

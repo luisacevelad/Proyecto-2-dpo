@@ -15,7 +15,7 @@ Hay un programa (metodo `main`) por cada tipo de usuario, todos en `src/cds/cons
 | Usuario | Clase | Usuario de prueba |
 |---|---|---|
 | Administrador | `ConsolaAdministrador` | admin / admin123 |
-| Socio | `ConsolaSocio` | ana / ana123, carlos / carlos123 |
+| Socio, estudiante o externo | `ConsolaSocio` | ana / ana123, carlos / carlos123; estudiante sebas / sebas123; externo pablo / pablo123 |
 | Empleado (entrenador o fisioterapeuta) | `ConsolaEmpleado` | leo / leo123 (entrenador), paula / paula123 (fisioterapeuta) |
 
 1. Abra la clase y seleccione Run As > Java Application.
@@ -63,6 +63,11 @@ Todos los usuarios tienen password = login + `123` (ej: `julia` / `julia123`).
 | Abierto Competitivo de Tenis | Inscripciones abiertas | Tarifa de $50.000; quedan 7 cupos. Probar inscribirse y salirse como socio (`laura`) o empleado (`max`) |
 | Copa Competitiva de Futbol | Inscripciones abiertas | Torneo por equipos con Seneca Rojo inscrito (preferencial por su desempeno) |
 | Liga Recreativa de Tenis | En curso | Registrar los 2 resultados pendientes y finalizarla (Administrador > Torneos) |
-| Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla de posiciones y el historial; ganaron Carlos y Diana |
+| Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla y el historial. Ganaron Carlos y Diana: cada uno tiene un bono del 20% (Tienda y cafeteria > comprar > usar bono) |
+| Copa Relampago de Tenis de Mesa | Finalizado | Competitivo con un empleado (`max`): no pago inscripcion y no recibe premio; Felipe gano $40.000 (Torneos > Ver mis bonos y premios) |
+
+Estudiantes y externos: el administrador los registra en Usuarios y turnos; entran por `ConsolaSocio` y solo ven Torneos y la tienda.
+`sebas` (estudiante) y `pablo` (externo) ya estan inscritos en el Abierto Competitivo de Tenis.
+
 
 Si quiere volver a los datos originales despues de probar: `git restore datos/club.json`

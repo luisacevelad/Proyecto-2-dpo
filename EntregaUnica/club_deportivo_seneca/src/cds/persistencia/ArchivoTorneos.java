@@ -25,6 +25,7 @@ import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Usuario;
+import cds.ventas.Bono;
 import cds.ReglaNegocioException;
 
 /**
@@ -34,6 +35,9 @@ import cds.ReglaNegocioException;
  * Los torneos se reconstruyen con los metodos restaurar* de Torneo y
  * EncuentroTorneo, que no vuelven a validar reglas (por ejemplo, fechas de
  * inscripcion ya pasadas).
+ *
+ * Tambien guarda los bonos entregados por los torneos recreativos y los premios
+ * en efectivo de los competitivos.
  *
  * Referencias que usa el archivo:
  * - Usuarios por login y equipos por nombre (ya cargados por ArchivoClub).
@@ -69,11 +73,30 @@ public final class ArchivoTorneos {
 	private static Map<String, Object> guardarTorneo(Torneo torneo) throws IOException {
 		Map<String, Object> item = Json.objeto();
 		if (torneo instanceof TorneoRecreativo) {
+			TorneoRecreativo recreativo = (TorneoRecreativo) torneo;
 			item.put("tipo", RECREATIVO);
-			item.put("porcentajeBono", Double.valueOf(((TorneoRecreativo) torneo).getPorcentajeBono()));
+			item.put("porcentajeBono", Double.valueOf(recreativo.getPorcentajeBono()));
+			List<Object> bonos = Json.arreglo();
+			for (Bono bono : recreativo.getBonosEntregados()) {
+				Map<String, Object> dato = Json.objeto();
+				dato.put("dueno", bono.getDueno().getLogin());
+				dato.put("porcentaje", Double.valueOf(bono.getPorcentaje()));
+				dato.put("usado", Boolean.valueOf(bono.isUsado()));
+				bonos.add(dato);
+			}
+			item.put("bonosEntregados", bonos);
 		} else if (torneo instanceof TorneoCompetitivo) {
+			TorneoCompetitivo competitivo = (TorneoCompetitivo) torneo;
 			item.put("tipo", COMPETITIVO);
-			item.put("tarifa", Double.valueOf(((TorneoCompetitivo) torneo).getTarifa()));
+			item.put("tarifa", Double.valueOf(competitivo.getTarifa()));
+			List<Object> premios = Json.arreglo();
+			for (Map.Entry<Usuario, Double> premio : competitivo.getPremiosEntregados().entrySet()) {
+				Map<String, Object> dato = Json.objeto();
+				dato.put("usuario", premio.getKey().getLogin());
+				dato.put("monto", premio.getValue());
+				premios.add(dato);
+			}
+			item.put("premiosEntregados", premios);
 		} else {
 			throw new IOException("Tipo de torneo no soportado al guardar: " + torneo.getClass().getSimpleName());
 		}
@@ -204,6 +227,21 @@ public final class ArchivoTorneos {
 			torneo.restaurarEncuentro(encuentro);
 		}
 
+		if (torneo instanceof TorneoRecreativo && item.containsKey("bonosEntregados")) {
+			for (Object dato : Json.comoArreglo(item.get("bonosEntregados"))) {
+				Map<String, Object> d = Json.comoObjeto(dato);
+				Bono bono = new Bono(usuario(club, Json.texto(d, "dueno")), Json.decimal(d, "porcentaje"), nombre);
+				bono.restaurarUsado(Json.booleano(d, "usado"));
+				((TorneoRecreativo) torneo).restaurarBono(bono);
+			}
+		}
+		if (torneo instanceof TorneoCompetitivo && item.containsKey("premiosEntregados")) {
+			for (Object dato : Json.comoArreglo(item.get("premiosEntregados"))) {
+				Map<String, Object> d = Json.comoObjeto(dato);
+				((TorneoCompetitivo) torneo).restaurarPremio(usuario(club, Json.texto(d, "usuario")), Json.decimal(d, "monto"));
+			}
+		}
+
 		int idGanador = Json.entero(item, "ganador");
 		InscripcionTorneo ganador = idGanador < 0 ? null : inscripcion(inscripciones, idGanador, nombre);
 		torneo.restaurarEstado(EstadoTorneo.valueOf(Json.texto(item, "estado")), Json.booleano(item, "preferencialesLiberados"),
@@ -241,6 +279,39 @@ public final class ArchivoTorneos {
 			return new EquipoTorneo(equipo);
 		}
 		throw new IOException("Tipo de participante desconocido: " + tipo);
+	}
+
+	// ----------------------------------------------------------------------
+	// Bono usado en una venta: se guarda como {torneo, indice del bono en ese torneo}
+	// ----------------------------------------------------------------------
+
+	static Map<String, Object> guardarReferenciaBono(Club club, Bono bono) throws IOException {
+		if (bono == null) {
+			return null;
+		}
+		Torneo torneo = club.buscarTorneo(bono.getOrigen());
+		int indice = torneo instanceof TorneoRecreativo ? ((TorneoRecreativo) torneo).getBonosEntregados().indexOf(bono) : -1;
+		if (indice < 0) {
+			throw new IOException("Una venta usa un bono que no pertenece a ningun torneo: " + bono.getOrigen());
+		}
+		Map<String, Object> referencia = Json.objeto();
+		referencia.put("torneo", torneo.getNombre());
+		referencia.put("indice", Integer.valueOf(indice));
+		return referencia;
+	}
+
+	static Bono cargarReferenciaBono(Club club, Map<String, Object> referencia) throws IOException {
+		String nombre = Json.texto(referencia, "torneo");
+		Torneo torneo = club.buscarTorneo(nombre);
+		if (!(torneo instanceof TorneoRecreativo)) {
+			throw new IOException("Una venta usa un bono de un torneo recreativo que no existe: " + nombre);
+		}
+		List<Bono> bonos = ((TorneoRecreativo) torneo).getBonosEntregados();
+		int indice = Json.entero(referencia, "indice");
+		if (indice < 0 || indice >= bonos.size()) {
+			throw new IOException("Referencia de bono fuera de rango en " + nombre + ": " + indice);
+		}
+		return bonos.get(indice);
 	}
 
 	private static Usuario usuario(Club club, String login) throws IOException {

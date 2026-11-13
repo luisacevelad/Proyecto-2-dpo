@@ -17,6 +17,7 @@ import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.usuarios.Administrador;
 import cds.usuarios.Usuario;
+import cds.ventas.Bono;
 
 /**
  * Opciones de torneos para quien juega: socios y empleados. Las reglas
@@ -38,7 +39,8 @@ public class MenuTorneosJugador {
 				.agregar("Inscribirme en un torneo", this::inscribirme)
 				.agregar("Salirme de un torneo", this::salirme)
 				.agregar("Ver mis torneos", this::verMisTorneos)
-				.agregar("Ver detalle e historial de un torneo", this::verDetalle);
+				.agregar("Ver detalle e historial de un torneo", this::verDetalle)
+				.agregar("Ver mis bonos y premios", this::verPremios);
 	}
 
 	private List<Torneo> abiertos() {
@@ -158,6 +160,26 @@ public class MenuTorneosJugador {
 			}
 			System.out.println("- " + VistaTorneos.resumen(t) + " | como " + i.getParticipante().getNombre()
 					+ (i.isPreferencial() ? " (preferencial)" : "") + extra);
+		}
+	}
+
+	private void verPremios() {
+		boolean alguno = false;
+		for (Bono b : consola.club.bonosDisponibles(consola.usuario)) {
+			alguno = true;
+			System.out.println("- Bono de " + b.getPorcentaje() + "% sin usar (ganado en " + b.getOrigen() + ")");
+		}
+		for (Torneo t : consola.club.getTorneos()) {
+			if (t instanceof TorneoCompetitivo) {
+				Double monto = ((TorneoCompetitivo) t).getPremiosEntregados().get(consola.usuario);
+				if (monto != null) {
+					alguno = true;
+					System.out.println("- Premio en efectivo de " + ConsolaBase.pesos(monto) + " (" + t.getNombre() + ")");
+				}
+			}
+		}
+		if (!alguno) {
+			System.out.println("Todavia no tiene bonos ni premios.");
 		}
 	}
 

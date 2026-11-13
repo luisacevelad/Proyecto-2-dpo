@@ -66,6 +66,8 @@ import cds.partidos.Suspension;
 import cds.usuarios.Administrador;
 import cds.usuarios.Empleado;
 import cds.usuarios.Entrenador;
+import cds.usuarios.Estudiante;
+import cds.usuarios.Externo;
 import cds.usuarios.EstadoSolicitud;
 import cds.usuarios.Fisioterapeuta;
 import cds.usuarios.RestriccionMedica;
@@ -104,7 +106,7 @@ public class ArchivoClub {
 		raiz.put("competencias", guardarCompetencias(club, nominas, fases));
 		raiz.put("partidos", guardarPartidos(club, partidos, nominas, fases));
 		raiz.put("sesiones", guardarSesiones(club, instalaciones));
-		raiz.put("tienda", guardarTienda(club.getTienda()));
+		raiz.put("tienda", guardarTienda(club));
 		raiz.put("turnos", guardarTurnos(club));
 		raiz.put("solicitudes", guardarSolicitudes(club));
 		raiz.put(ArchivoTorneos.SECCION, ArchivoTorneos.guardar(club));
@@ -185,6 +187,12 @@ public class ArchivoClub {
 				item.put("codigoDescuento", ((Fisioterapeuta) usuario).getCodigoDescuento());
 			} else if (usuario instanceof Administrador) {
 				item.put("tipo", "ADMINISTRADOR");
+			} else if (usuario instanceof Estudiante) {
+				item.put("tipo", "ESTUDIANTE");
+				item.put("codigoEstudiantil", ((Estudiante) usuario).getCodigoEstudiantil());
+			} else if (usuario instanceof Externo) {
+				item.put("tipo", "EXTERNO");
+				item.put("documento", ((Externo) usuario).getDocumento());
 			} else {
 				throw new IOException("Tipo de usuario no compatible: " + usuario.getClass().getName());
 			}
@@ -534,7 +542,8 @@ public class ArchivoClub {
 		return resultado;
 	}
 
-	private static Map<String, Object> guardarTienda(TiendaCafeteria tienda) throws IOException {
+	private static Map<String, Object> guardarTienda(Club club) throws IOException {
+		TiendaCafeteria tienda = club.getTienda();
 		Map<String, Object> resultado = Json.objeto();
 		List<Object> ubicaciones = Json.arreglo();
 		for (Ubicacion ubicacion : tienda.getUbicaciones()) {
@@ -620,6 +629,7 @@ public class ArchivoClub {
 			registro.put("puntosProcesados", Boolean.valueOf(venta.isPuntosProcesados()));
 			registro.put("total", Double.valueOf(venta.total()));
 			registro.put("puntosGenerados", Integer.valueOf(venta.puntosGenerados()));
+			registro.put("bono", ArchivoTorneos.guardarReferenciaBono(club, venta.getBono()));
 			if (venta instanceof VentaTienda) {
 				VentaTienda ventaTienda = (VentaTienda) venta;
 				Empleado duenoCodigo = ventaTienda.getDuenoCodigo();
@@ -717,12 +727,13 @@ public class ArchivoClub {
 		cargarEstadoEquipos(club, datosEquipos, partidos);
 		List<Object> datosSesiones = arreglo(raiz, "sesiones");
 		cargarSesiones(club, datosSesiones, instalaciones);
+		// Los torneos van antes que la tienda porque las ventas pueden referenciar un bono de torneo
+		ArchivoTorneos.cargar(club, raiz);
 		Map<String, Object> datosTienda = objeto(raiz, "tienda");
 		cargarTienda(club, datosTienda);
 		cargarTurnos(club, arreglo(raiz, "turnos"));
 		cargarSolicitudes(club, arreglo(raiz, "solicitudes"));
 		cargarEstadoUsuarios(club, datosUsuarios);
-		ArchivoTorneos.cargar(club, raiz);
 		return club;
 	}
 
@@ -742,6 +753,10 @@ public class ArchivoClub {
 				usuario = new Fisioterapeuta(login, password, nombre, texto(item, "codigoDescuento"));
 			} else if (tipo.equals("ADMINISTRADOR")) {
 				usuario = new Administrador(login, password, nombre);
+			} else if (tipo.equals("ESTUDIANTE")) {
+				usuario = new Estudiante(login, password, nombre, texto(item, "codigoEstudiantil"));
+			} else if (tipo.equals("EXTERNO")) {
+				usuario = new Externo(login, password, nombre, texto(item, "documento"));
 			} else {
 				throw new IOException("Tipo de usuario no compatible: " + tipo);
 			}
@@ -1057,6 +1072,10 @@ public class ArchivoClub {
 					throw new IOException("Tipo de producto de venta no compatible: " + tipoProducto);
 				}
 				venta.getLineas().add(new LineaVenta(producto, entero(linea, "cantidad"), decimal(linea, "precioUnitario")));
+			}
+			Object referenciaBono = item.get("bono");
+			if (referenciaBono != null) {
+				venta.restaurarBono(ArchivoTorneos.cargarReferenciaBono(club, Json.comoObjeto(referenciaBono)));
 			}
 			tienda.restaurarVenta(venta, entero(item, "puntosRedimidos"), booleano(item, "confirmada"),
 					booleano(item, "puntosProcesados"));
