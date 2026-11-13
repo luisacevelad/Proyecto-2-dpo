@@ -28,8 +28,9 @@ Hay un programa (metodo `main`) por cada tipo de usuario, todos en `src/cds/cons
 - `ConsolaBase`: carga los datos, autentica, muestra el menu del rol y guarda al salir.
 - `Entrada`: lee y valida todas las entradas (numeros, fechas, horas, s/n, listas).
 - `Menu` y `Accion`: menu numerado reutilizable; para agregar una opcion basta con `menu.agregar("texto", accion)`.
-- Un menu por area: `MenuAdminPersonal`, `MenuAdminDeportes`, `MenuAdminTienda`, `MenuEntrenador`,
-  `MenuFisioterapeuta`, `MenuCompras` y `RegistroPartido`.
+- Un menu por area: `MenuAdminPersonal`, `MenuAdminDeportes`, `MenuAdminTienda`, `MenuAdminTorneos`, `MenuEntrenador`,
+  `MenuFisioterapeuta`, `MenuCompras`, `MenuTorneosJugador` (socios y empleados) y `RegistroPartido`.
+- `VistaTorneos`: impresion de listas, tablas de posiciones e historial de torneos.
 
 ## Pruebas
 Las pruebas JUnit 5 estan en la carpeta `test`.
@@ -50,5 +51,14 @@ Todos los usuarios tienen password = login + `123` (ej: `julia` / `julia123`).
 | HU-JUG-01 | Socio (`carlos`) | Academias > Reservar en Academia de Tenis el 2026-12-01 de 10:00 a 11:00 (rechaza: 2 instalaciones ya ocupadas). Tienda y cafeteria > comprar un Latte (recibirlo en Cancha Tenis 1) y luego reservar la Cancha Padel 1 (rechaza por bebida caliente) |
 | HU-SOC-01 | Socio (`carlos`) | Academias > Reservar en Academia de Padel con 2 jugadores (rechaza: el padel es de dobles); con DOBLES y 4 jugadores (funciona) |
 | HU-SOC-02 | Socio (`hugo`) | Inscribirme en un equipo: Seneca Sub-15 (rechaza por categoria); Seneca Azul con un dorsal libre (funciona). Con `ana`: Seneca Azul (rechaza: ya juega futbol) |
+
+### Torneos de demostracion
+| Torneo | Estado | Para probar |
+|---|---|---|
+| Copa Recreativa Tenis de Mesa | Inscripciones abiertas | Socio > Torneos > Inscribirme. Los 4 cupos regulares estan llenos y queda 1 preferencial: `laura` no puede entrar (cupo reservado al ranking); `felipe` (primero del ranking) si entra como preferencial |
+| Abierto Competitivo de Tenis | Inscripciones abiertas | Tarifa de $50.000; quedan 7 cupos. Probar inscribirse y salirse como socio (`laura`) o empleado (`max`) |
+| Copa Competitiva de Futbol | Inscripciones abiertas | Torneo por equipos con Seneca Rojo inscrito (preferencial por su desempeno) |
+| Liga Recreativa de Tenis | En curso | Registrar los 2 resultados pendientes y finalizarla (Administrador > Torneos) |
+| Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla de posiciones y el historial; ganaron Carlos y Diana |
 
 Si quiere volver a los datos originales despues de probar: `git restore datos/club.json`
