@@ -61,7 +61,7 @@ public class ConsolaSocio extends ConsolaBase {
 		menu.agregar("Ver mis entrenamientos y evaluaciones", this::verEntrenamientos);
 		menu.agregarSubmenu("Tienda y cafeteria", new MenuCompras(this).construir());
 		menu.agregar("Ver y pagar mensualidades", this::mensualidades);
-		// TODO Torneos (Persona A/B): submenu para ver torneos, inscribirse y salirse
+		menu.agregarSubmenu("Torneos", new MenuTorneosJugador(this).construir());
 		return menu;
 	}
 

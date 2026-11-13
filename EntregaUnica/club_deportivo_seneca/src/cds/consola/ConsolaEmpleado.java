@@ -59,7 +59,7 @@ public class ConsolaEmpleado extends ConsolaBase {
 		menu.agregar("Ver el estado de mis sugerencias", this::verSugerencias);
 		menu.agregar("Ver mi codigo de descuento", () -> System.out.println("Su codigo: " + empleado().getCodigoDescuento()));
 		menu.agregarSubmenu("Tienda y cafeteria", new MenuCompras(this).construir());
-		// TODO Torneos (Persona B): inscribirse a torneos individuales si no esta de turno ese dia
+		menu.agregarSubmenu("Torneos", new MenuTorneosJugador(this).construir());
 		return menu;
 	}
 
