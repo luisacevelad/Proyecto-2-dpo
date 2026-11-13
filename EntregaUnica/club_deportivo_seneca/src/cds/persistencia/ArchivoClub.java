@@ -107,6 +107,7 @@ public class ArchivoClub {
 		raiz.put("tienda", guardarTienda(club.getTienda()));
 		raiz.put("turnos", guardarTurnos(club));
 		raiz.put("solicitudes", guardarSolicitudes(club));
+		raiz.put(ArchivoTorneos.SECCION, ArchivoTorneos.guardar(club));
 		File salida = new File(directorio, ARCHIVO);
 		Path temporal = Files.createTempFile(directorio.toPath(), ARCHIVO + ".", ".tmp");
 		boolean reemplazado = false;
@@ -721,6 +722,7 @@ public class ArchivoClub {
 		cargarTurnos(club, arreglo(raiz, "turnos"));
 		cargarSolicitudes(club, arreglo(raiz, "solicitudes"));
 		cargarEstadoUsuarios(club, datosUsuarios);
+		ArchivoTorneos.cargar(club, raiz);
 		return club;
 	}
 

@@ -667,15 +667,33 @@
           "socio": "felipe",
           "nivel": "INTERMEDIO",
           "fecha": "2026-11-01",
-          "puntajeRanking": 1000.0,
-          "historial": []
+          "puntajeRanking": 1031.36,
+          "historial": [
+            {
+              "fecha": "2026-11-03",
+              "puntaje": 1016.0
+            },
+            {
+              "fecha": "2026-11-05",
+              "puntaje": 1031.36
+            }
+          ]
         },
         {
           "socio": "mateo",
           "nivel": "INTERMEDIO",
           "fecha": "2026-11-01",
-          "puntajeRanking": 1000.0,
-          "historial": []
+          "puntajeRanking": 968.0256,
+          "historial": [
+            {
+              "fecha": "2026-11-03",
+              "puntaje": 984.0
+            },
+            {
+              "fecha": "2026-11-06",
+              "puntaje": 968.0256
+            }
+          ]
         },
         {
           "socio": "natalia",
@@ -688,8 +706,17 @@
           "socio": "ana",
           "nivel": "INTERMEDIO",
           "fecha": "2026-11-01",
-          "puntajeRanking": 1000.0,
-          "historial": []
+          "puntajeRanking": 1000.6143999999999,
+          "historial": [
+            {
+              "fecha": "2026-11-05",
+              "puntaje": 984.64
+            },
+            {
+              "fecha": "2026-11-06",
+              "puntaje": 1000.6143999999999
+            }
+          ]
         }
       ],
       "instalaciones": [
@@ -794,6 +821,54 @@
       ],
       "local": "Seneca Rojo",
       "visitante": "Seneca Azul"
+    },
+    {
+      "id": 1,
+      "tipo": "PRACTICA",
+      "fecha": "2026-11-03",
+      "marcadorLocal": 3,
+      "marcadorVisitante": 0,
+      "jugado": true,
+      "registradoEnClub": true,
+      "participantes": [
+        "felipe",
+        "mateo"
+      ],
+      "estadisticas": [],
+      "academia": "Academia de Tenis de Mesa",
+      "modalidad": "SENCILLOS"
+    },
+    {
+      "id": 2,
+      "tipo": "PRACTICA",
+      "fecha": "2026-11-05",
+      "marcadorLocal": 3,
+      "marcadorVisitante": 1,
+      "jugado": true,
+      "registradoEnClub": true,
+      "participantes": [
+        "felipe",
+        "ana"
+      ],
+      "estadisticas": [],
+      "academia": "Academia de Tenis de Mesa",
+      "modalidad": "SENCILLOS"
+    },
+    {
+      "id": 3,
+      "tipo": "PRACTICA",
+      "fecha": "2026-11-06",
+      "marcadorLocal": 3,
+      "marcadorVisitante": 2,
+      "jugado": true,
+      "registradoEnClub": true,
+      "participantes": [
+        "ana",
+        "mateo"
+      ],
+      "estadisticas": [],
+      "academia": "Academia de Tenis de Mesa",
+      "modalidad": "SENCILLOS"
     }
   ],
   "sesiones": [
@@ -1157,6 +1232,274 @@
       "nuevaHoraFin": "22:00",
       "estado": "PENDIENTE",
       "resueltaPor": null
+    }
+  ],
+  "torneos": [
+    {
+      "tipo": "RECREATIVO",
+      "porcentajeBono": 15.0,
+      "nombre": "Copa Recreativa Tenis de Mesa",
+      "especialidad": {
+        "tipo": "INDIVIDUAL",
+        "disciplina": "TENIS_MESA",
+        "nivel": "INTERMEDIO",
+        "dobles": false
+      },
+      "cupos": 5,
+      "fechaInicio": "2026-12-10",
+      "fechaLimitePreferencial": "2026-12-03",
+      "estado": "INSCRIPCIONES_ABIERTAS",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "mateo"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": false,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "ana"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": false,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "natalia"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": false,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "kevin"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": false,
+          "montoPagado": 0.0
+        }
+      ],
+      "encuentros": [],
+      "ganador": -1
+    },
+    {
+      "tipo": "COMPETITIVO",
+      "tarifa": 50000.0,
+      "nombre": "Abierto Competitivo de Tenis",
+      "especialidad": {
+        "tipo": "INDIVIDUAL",
+        "disciplina": "TENIS",
+        "nivel": "INTERMEDIO",
+        "dobles": false
+      },
+      "cupos": 8,
+      "fechaInicio": "2026-12-15",
+      "fechaLimitePreferencial": "2026-12-08",
+      "estado": "INSCRIPCIONES_ABIERTAS",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "beto"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": true,
+          "montoPagado": 50000.0
+        }
+      ],
+      "encuentros": [],
+      "ganador": -1
+    },
+    {
+      "tipo": "COMPETITIVO",
+      "tarifa": 200000.0,
+      "nombre": "Copa Competitiva de Futbol",
+      "especialidad": {
+        "tipo": "CONJUNTO",
+        "deporte": "FUTBOL",
+        "categoria": "MAYORES"
+      },
+      "cupos": 4,
+      "fechaInicio": "2026-12-12",
+      "fechaLimitePreferencial": "2026-12-05",
+      "estado": "INSCRIPCIONES_ABIERTAS",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "EQUIPO",
+            "equipo": "Seneca Rojo"
+          },
+          "fecha": "2026-11-11",
+          "preferencial": true,
+          "montoPagado": 200000.0
+        }
+      ],
+      "encuentros": [],
+      "ganador": -1
+    },
+    {
+      "tipo": "RECREATIVO",
+      "porcentajeBono": 10.0,
+      "nombre": "Liga Recreativa de Tenis",
+      "especialidad": {
+        "tipo": "INDIVIDUAL",
+        "disciplina": "TENIS",
+        "nivel": "PRINCIPIANTE",
+        "dobles": false
+      },
+      "cupos": 4,
+      "fechaInicio": "2026-11-09",
+      "fechaLimitePreferencial": "2026-11-04",
+      "estado": "EN_CURSO",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "ana"
+          },
+          "fecha": "2026-11-01",
+          "preferencial": true,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "carlos"
+          },
+          "fecha": "2026-11-01",
+          "preferencial": false,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "JUGADOR",
+            "login": "natalia"
+          },
+          "fecha": "2026-11-01",
+          "preferencial": false,
+          "montoPagado": 0.0
+        }
+      ],
+      "encuentros": [
+        {
+          "participanteA": 0,
+          "participanteB": 1,
+          "fecha": "2026-11-15",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 2,
+          "marcadorB": 0
+        },
+        {
+          "participanteA": 0,
+          "participanteB": 2,
+          "fecha": "2026-11-15",
+          "ronda": "Todos contra todos",
+          "jugado": false,
+          "marcadorA": 0,
+          "marcadorB": 0
+        },
+        {
+          "participanteA": 1,
+          "participanteB": 2,
+          "fecha": "2026-11-15",
+          "ronda": "Todos contra todos",
+          "jugado": false,
+          "marcadorA": 0,
+          "marcadorB": 0
+        }
+      ],
+      "ganador": -1
+    },
+    {
+      "tipo": "RECREATIVO",
+      "porcentajeBono": 20.0,
+      "nombre": "Torneo Recreativo de Padel Dobles",
+      "especialidad": {
+        "tipo": "INDIVIDUAL",
+        "disciplina": "PADEL",
+        "nivel": "INTERMEDIO",
+        "dobles": true
+      },
+      "cupos": 6,
+      "fechaInicio": "2026-10-20",
+      "fechaLimitePreferencial": "2026-10-15",
+      "estado": "FINALIZADO",
+      "preferencialesLiberados": false,
+      "inscripciones": [
+        {
+          "participante": {
+            "tipo": "PAREJA",
+            "jugador1": "carlos",
+            "jugador2": "diana"
+          },
+          "fecha": "2026-10-10",
+          "preferencial": true,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "PAREJA",
+            "jugador1": "eva",
+            "jugador2": "kevin"
+          },
+          "fecha": "2026-10-11",
+          "preferencial": false,
+          "montoPagado": 0.0
+        },
+        {
+          "participante": {
+            "tipo": "PAREJA",
+            "jugador1": "sofia",
+            "jugador2": "tomas"
+          },
+          "fecha": "2026-10-12",
+          "preferencial": false,
+          "montoPagado": 0.0
+        }
+      ],
+      "encuentros": [
+        {
+          "participanteA": 0,
+          "participanteB": 1,
+          "fecha": "2026-10-20",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 2,
+          "marcadorB": 1
+        },
+        {
+          "participanteA": 0,
+          "participanteB": 2,
+          "fecha": "2026-10-20",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 2,
+          "marcadorB": 1
+        },
+        {
+          "participanteA": 1,
+          "participanteB": 2,
+          "fecha": "2026-10-20",
+          "ronda": "Todos contra todos",
+          "jugado": true,
+          "marcadorA": 2,
+          "marcadorB": 1
+        }
+      ],
+      "ganador": 0
     }
   ]
 }
