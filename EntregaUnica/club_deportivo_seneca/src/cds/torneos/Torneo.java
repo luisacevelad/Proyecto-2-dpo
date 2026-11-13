@@ -15,6 +15,9 @@ public abstract class Torneo {
 
 	public static final int PORCENTAJE_PREFERENCIAL = 20;
 
+	/** Dias antes del inicio en que se liberan los cupos preferenciales no usados. */
+	public static final int DIAS_LIBERACION = 3;
+
 	private final String nombre;
 	private final Especialidad especialidad;
 	private final int cupos;

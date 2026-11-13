@@ -9,6 +9,9 @@ import cds.usuarios.Usuario;
 import cds.ventas.Bono;
 
 public class TorneoRecreativo extends Torneo {
+	/** Descuento del bono que recibe cada ganador. */
+	public static final double PORCENTAJE_BONO = 15;
+
 	private final double porcentajeBono;
 	private final List<Bono> bonosEntregados;
 

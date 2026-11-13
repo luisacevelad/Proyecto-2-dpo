@@ -10,8 +10,6 @@ import cds.academias.InscripcionAcademia;
 import cds.competencias.Competencia;
 import cds.competencias.Liga;
 import cds.conjunto.Equipo;
-import cds.conjunto.PartidoInterno;
-import cds.partidos.Partido;
 import cds.usuarios.Usuario;
 
 
@@ -97,27 +95,6 @@ public class RankingTorneos {
 
 	public double desempenoEquipo(Equipo e) {
 		double puntos = 0;
-		for (Partido p : club.getPartidos()) {
-			if (p instanceof PartidoInterno && p.isJugado()) {
-				PartidoInterno pi = (PartidoInterno) p;
-				int propios;
-				int rival;
-				if (pi.getLocal() == e) {
-					propios = pi.getMarcadorLocal();
-					rival = pi.getMarcadorVisitante();
-				} else if (pi.getVisitante() == e) {
-					propios = pi.getMarcadorVisitante();
-					rival = pi.getMarcadorLocal();
-				} else {
-					continue;
-				}
-				if (propios > rival) {
-					puntos += Posicion.PUNTOS_VICTORIA;
-				} else if (propios == rival) {
-					puntos += Posicion.PUNTOS_EMPATE;
-				}
-			}
-		}
 		for (Competencia c : club.getCompetencias()) {
 			if (c instanceof Liga) {
 				puntos += ((Liga) c).getPuntos(e);

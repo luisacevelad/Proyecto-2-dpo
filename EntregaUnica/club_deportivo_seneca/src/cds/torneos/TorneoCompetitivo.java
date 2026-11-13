@@ -12,7 +12,7 @@ import cds.usuarios.Usuario;
 
 public class TorneoCompetitivo extends Torneo {
 
-	public static final double FRACCION_PREMIO = 1.0;
+	public static final double FRACCION_PREMIO = 0.7;
 
 	private final double tarifa;
 	private final Map<Usuario, Double> premiosEntregados;

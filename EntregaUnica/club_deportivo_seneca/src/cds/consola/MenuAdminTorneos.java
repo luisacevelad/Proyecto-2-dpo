@@ -54,23 +54,19 @@ public class MenuAdminTorneos {
 		int cupos = entrada.entero("Numero de cupos", 2, 128);
 		LocalDate hoy = consola.hoy();
 		LocalDate inicio = leerFechaDesde("Fecha de inicio", hoy.plusDays(1));
-		LocalDate limite = leerFechaDesde("Ultimo dia de reserva de cupos preferenciales", hoy);
-		while (!limite.isBefore(inicio)) {
-			System.out.println("  Debe ser anterior a la fecha de inicio (" + inicio + ").");
-			limite = leerFechaDesde("Ultimo dia de reserva de cupos preferenciales", hoy);
-		}
+		LocalDate limite = inicio.minusDays(Torneo.DIAS_LIBERACION);
 
 		Torneo t;
 		if (competitivo) {
 			double tarifa = entrada.decimal("Tarifa de inscripcion", 1, 100000000);
 			t = new TorneoCompetitivo(nombre, especialidad, cupos, inicio, limite, tarifa);
 		} else {
-			double bono = entrada.decimal("Porcentaje de descuento del bono (1-100)", 1, 100);
-			t = new TorneoRecreativo(nombre, especialidad, cupos, inicio, limite, bono);
+			t = new TorneoRecreativo(nombre, especialidad, cupos, inicio, limite, TorneoRecreativo.PORCENTAJE_BONO);
 		}
 		consola.club.registrarTorneo(t);
 		System.out.println("Torneo creado: " + VistaTorneos.resumen(t));
-		System.out.println("Cupos preferenciales reservados: " + t.getCuposPreferenciales());
+		System.out.println("Cupos preferenciales reservados: " + t.getCuposPreferenciales()
+				+ " (se liberan el " + limite + " si no se llenan)");
 	}
 
 	private Especialidad leerEspecialidad() {
