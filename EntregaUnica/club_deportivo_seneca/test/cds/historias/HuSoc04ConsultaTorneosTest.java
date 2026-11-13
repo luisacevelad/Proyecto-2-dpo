@@ -17,10 +17,11 @@ import cds.Club;
 import cds.ReglaNegocioException;
 import cds.academias.Disciplina;
 import cds.academias.Nivel;
-import cds.torneos.Encuentro;
+import cds.torneos.EncuentroTorneo;
+import cds.torneos.EspecialidadIndividual;
 import cds.torneos.EstadoTorneo;
-import cds.torneos.Inscripcion;
-import cds.torneos.JugadorClub;
+import cds.torneos.JugadorTorneo;
+import cds.torneos.Posicion;
 import cds.torneos.Torneo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Socio;
@@ -30,34 +31,36 @@ class HuSoc04ConsultaTorneosTest {
 
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
 	private static final LocalDate INICIO = LocalDate.of(2026, 11, 21);
+	private static final LocalDate LIMITE = INICIO.minusDays(3);
 
 	private Club club;
-	private Torneo abierto;
-	private Torneo enCurso;
 	private Torneo finalizado;
 
 	@BeforeEach
 	void setUp() throws ReglaNegocioException {
 		club = new Club();
-		abierto = nuevo("Abierto");
-		enCurso = nuevo("En curso");
+		Torneo abierto = nuevo("Abierto");
+		Torneo enCurso = nuevo("En curso");
 		finalizado = nuevo("Finalizado");
 		for (Torneo t : List.of(abierto, enCurso, finalizado)) {
 			for (String login : List.of("lucho", "juancho", "nico", "pipe")) {
-				t.inscribir(List.of(new JugadorClub(new Socio(login, "1", login, "CC-" + login, HOY.minusYears(25)))),
-						false, HOY);
+				club.inscribirEnTorneo(t, new JugadorTorneo(new Socio(login, "1", login, "CC-" + login, HOY.minusYears(25))),
+						HOY);
 			}
 		}
 		enCurso.iniciar(INICIO);
 		finalizado.iniciar(INICIO);
-		while (!finalizado.getEncuentrosPendientes().isEmpty()) {
-			Encuentro e = finalizado.getEncuentrosPendientes().get(0);
-			finalizado.registrarResultado(e, e.getLocal(), "6-3 6-2");
+		List<?> orden = finalizado.getInscripciones();
+		for (EncuentroTorneo e : finalizado.generarTodosContraTodos(INICIO)) {
+			boolean ganaA = orden.indexOf(e.getParticipanteA()) < orden.indexOf(e.getParticipanteB());
+			finalizado.registrarResultado(e, ganaA ? 6 : 3, ganaA ? 3 : 6);
 		}
+		finalizado.finalizar();
 	}
 
 	private Torneo nuevo(String nombre) throws ReglaNegocioException {
-		Torneo t = new TorneoRecreativo(nombre, Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO);
+		Torneo t = new TorneoRecreativo(nombre, new EspecialidadIndividual(Disciplina.TENIS, Nivel.INTERMEDIO, false), 8,
+				INICIO, LIMITE, 15);
 		club.registrarTorneo(t);
 		return t;
 	}
@@ -84,14 +87,14 @@ class HuSoc04ConsultaTorneosTest {
 		@Test
 		@DisplayName("muestra sus encuentros, posiciones y campeon")
 		void muestraHistorial() {
-			assertEquals(3, finalizado.getEncuentros().size());
-			assertTrue(finalizado.getEncuentros().stream().allMatch(Encuentro::isJugado));
+			assertEquals(6, finalizado.getEncuentros().size());
+			assertTrue(finalizado.getEncuentros().stream().allMatch(EncuentroTorneo::isJugado));
 
-			Inscripcion campeon = finalizado.getCampeon();
-			assertEquals("lucho", campeon.getIntegrantes().get(0).getId());
-			assertEquals("Campeon", finalizado.posicion(campeon));
-			assertEquals("Subcampeon", finalizado.posicion(finalizado.getInscripciones().get(2)));
-			assertEquals("Ronda 1", finalizado.posicion(finalizado.getInscripciones().get(1)));
+			List<Posicion> tabla = finalizado.tablaPosiciones();
+			assertEquals("lucho", tabla.get(0).getParticipante().getNombre());
+			assertEquals(3, tabla.get(0).getGanados());
+			assertEquals("pipe", tabla.get(3).getParticipante().getNombre());
+			assertEquals(tabla.get(0).getInscripcion(), finalizado.getGanador());
 		}
 	}
 }

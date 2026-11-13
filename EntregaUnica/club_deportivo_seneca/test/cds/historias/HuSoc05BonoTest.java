@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import cds.ReglaNegocioException;
 import cds.catalogo.Articulo;
-import cds.torneos.BonoDescuento;
 import cds.usuarios.Entrenador;
 import cds.usuarios.Socio;
+import cds.ventas.Bono;
 import cds.ventas.VentaTienda;
 
 @DisplayName("HU-SOC-05 Usar bono de descuento")
@@ -25,14 +25,13 @@ class HuSoc05BonoTest {
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
 
 	private Socio lucho;
-	private BonoDescuento bono;
+	private Bono bono;
 	private VentaTienda venta;
 
 	@BeforeEach
 	void setUp() throws ReglaNegocioException {
 		lucho = new Socio("lucho", "1", "Lucho", "CC-1", HOY.minusYears(25));
-		bono = new BonoDescuento(15, "Copa de tenis");
-		lucho.agregarBono(bono);
+		bono = new Bono(lucho, 15, "Copa de tenis");
 		venta = new VentaTienda(HOY, lucho);
 		venta.agregarLinea(new Articulo("Raqueta", "Implementos", 40000), 1);
 	}
@@ -52,7 +51,6 @@ class HuSoc05BonoTest {
 			assertEquals(6000, venta.descuentoBono());
 			assertEquals(totalSinBono - 6000, venta.total(), 0.001);
 			assertTrue(bono.isUsado());
-			assertTrue(lucho.bonosDisponibles().isEmpty());
 		}
 	}
 
@@ -63,7 +61,7 @@ class HuSoc05BonoTest {
 		@Test
 		@DisplayName("rechaza un bono ya usado")
 		void bonoUsado() throws ReglaNegocioException {
-			bono.usar();
+			bono.marcarUsado();
 
 			assertThrows(ReglaNegocioException.class, () -> venta.aplicarBono(bono));
 			assertEquals(0, venta.descuentoBono());
@@ -85,6 +83,14 @@ class HuSoc05BonoTest {
 			venta.aplicarCodigo(new Entrenador("profe", "1", "Profe", "D1"));
 
 			assertThrows(ReglaNegocioException.class, () -> venta.aplicarBono(bono));
+		}
+
+		@Test
+		@DisplayName("rechaza el bono de otra persona")
+		void bonoAjeno() {
+			Bono ajeno = new Bono(new Socio("juancho", "1", "Juancho", "CC-2", HOY.minusYears(25)), 15, "Copa");
+
+			assertThrows(ReglaNegocioException.class, () -> venta.aplicarBono(ajeno));
 		}
 	}
 }

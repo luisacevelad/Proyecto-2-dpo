@@ -8,29 +8,42 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import cds.Club;
 import cds.ReglaNegocioException;
 import cds.academias.Disciplina;
 import cds.academias.Nivel;
-import cds.torneos.Encuentro;
+import cds.torneos.EncuentroTorneo;
+import cds.torneos.EspecialidadIndividual;
 import cds.torneos.EstadoTorneo;
-import cds.torneos.Inscripcion;
-import cds.torneos.JugadorClub;
+import cds.torneos.JugadorTorneo;
+import cds.torneos.ParejaTorneo;
 import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Entrenador;
 import cds.usuarios.Socio;
 import cds.usuarios.Usuario;
+import cds.ventas.Bono;
 
 @DisplayName("HU-ADM-06 Registrar resultados")
 class HuAdm06ResultadosTest {
 
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
 	private static final LocalDate INICIO = LocalDate.of(2026, 11, 21);
+	private static final LocalDate LIMITE = INICIO.minusDays(3);
+	private static final EspecialidadIndividual TENIS = new EspecialidadIndividual(Disciplina.TENIS, Nivel.INTERMEDIO, false);
+
+	private Club club;
+
+	@BeforeEach
+	void setUp() {
+		club = new Club();
+	}
 
 	private Socio socio(String login) {
 		return new Socio(login, "1", login, "CC-" + login, HOY.minusYears(25));
@@ -38,16 +51,19 @@ class HuAdm06ResultadosTest {
 
 	private void inscribir(Torneo t, Usuario... jugadores) throws ReglaNegocioException {
 		for (Usuario u : jugadores) {
-			t.inscribir(List.of(new JugadorClub(u)), false, HOY);
+			club.inscribirEnTorneo(t, new JugadorTorneo(u), HOY);
 		}
 	}
 
-	/** Juega todo el cuadro haciendo ganar siempre al primero de cada encuentro. */
+	/** Inicia y juega todos contra todos: siempre gana el que se inscribio primero. */
 	private void jugarTodo(Torneo t) throws ReglaNegocioException {
-		while (!t.getEncuentrosPendientes().isEmpty()) {
-			Encuentro e = t.getEncuentrosPendientes().get(0);
-			t.registrarResultado(e, e.getLocal(), "6-4 6-4");
+		t.iniciar(INICIO);
+		List<?> orden = t.getInscripciones();
+		for (EncuentroTorneo e : t.generarTodosContraTodos(INICIO)) {
+			boolean ganaA = orden.indexOf(e.getParticipanteA()) < orden.indexOf(e.getParticipanteB());
+			t.registrarResultado(e, ganaA ? 2 : 0, ganaA ? 0 : 2);
 		}
+		t.finalizar();
 	}
 
 	@Nested
@@ -55,105 +71,94 @@ class HuAdm06ResultadosTest {
 	class Iniciar {
 
 		@Test
-		@DisplayName("genera los encuentros de la primera ronda y pasa a En curso")
+		@DisplayName("genera los encuentros y pasa a En curso")
 		void generaEncuentros() throws ReglaNegocioException {
-			Torneo t = new TorneoRecreativo("Copa", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO);
+			Torneo t = new TorneoRecreativo("Copa", TENIS, 8, INICIO, LIMITE, 15);
+			club.registrarTorneo(t);
 			inscribir(t, socio("lucho"), socio("juancho"), socio("nico"), socio("pipe"));
 
 			t.iniciar(INICIO);
 
 			assertEquals(EstadoTorneo.EN_CURSO, t.getEstado());
-			assertEquals(2, t.getEncuentrosPendientes().size());
+			assertEquals(6, t.generarTodosContraTodos(INICIO).size());
 		}
 
 		@Test
 		@DisplayName("rechaza iniciar con menos de 2 inscritos")
 		void pocosInscritos() throws ReglaNegocioException {
-			Torneo t = new TorneoRecreativo("Copa", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO);
+			Torneo t = new TorneoRecreativo("Copa", TENIS, 8, INICIO, LIMITE, 15);
+			club.registrarTorneo(t);
 			inscribir(t, socio("lucho"));
 
 			assertThrows(ReglaNegocioException.class, () -> t.iniciar(INICIO));
-			assertEquals(EstadoTorneo.ABIERTO, t.getEstado());
-		}
-
-		@Test
-		@DisplayName("con un numero impar de inscritos, uno pasa directo de ronda")
-		void numeroImpar() throws ReglaNegocioException {
-			Torneo t = new TorneoRecreativo("Copa", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO);
-			inscribir(t, socio("lucho"), socio("juancho"), socio("nico"));
-
-			t.iniciar(INICIO);
-			jugarTodo(t);
-
-			assertEquals(EstadoTorneo.FINALIZADO, t.getEstado());
+			assertEquals(EstadoTorneo.INSCRIPCIONES_ABIERTAS, t.getEstado());
 		}
 	}
 
 	@Nested
-	@DisplayName("CA-2 final de un competitivo ganada por un socio")
+	@DisplayName("CA-2 competitivo ganado por un socio")
 	class CompetitivoSocio {
 
 		@Test
-		@DisplayName("el torneo finaliza y el socio recibe el 70% de lo recaudado")
+		@DisplayName("el torneo finaliza y el socio recibe lo recaudado")
 		void recibePremio() throws ReglaNegocioException {
-			TorneoCompetitivo t = new TorneoCompetitivo("Abierto", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO,50000);
+			TorneoCompetitivo t = new TorneoCompetitivo("Abierto", TENIS, 8, INICIO, LIMITE, 50000);
+			club.registrarTorneo(t);
 			Socio lucho = socio("lucho");
 			inscribir(t, lucho, socio("juancho"), socio("nico"), socio("pipe"));
-			t.iniciar(INICIO);
 
 			jugarTodo(t);
 
 			assertEquals(EstadoTorneo.FINALIZADO, t.getEstado());
-			assertEquals("lucho", t.getCampeon().getIntegrantes().get(0).getId());
+			assertTrue(t.getGanador().getParticipante().incluye(lucho));
 			assertEquals(200000, t.totalRecaudado());
-			assertEquals(140000, t.getPremioEntregado());
+			assertEquals(200000, t.getPremiosEntregados().get(lucho));
 		}
 	}
 
 	@Nested
-	@DisplayName("CA-3 final de un recreativo")
+	@DisplayName("CA-3 recreativo")
 	class Recreativo {
 
 		@Test
-		@DisplayName("cada ganador con cuenta recibe un bono del 15%")
+		@DisplayName("cada ganador recibe un bono del porcentaje del torneo")
 		void recibeBono() throws ReglaNegocioException {
-			Torneo t = new TorneoRecreativo("Dobles", Disciplina.PADEL, Nivel.PRINCIPIANTE, true, 8, INICIO);
+			Torneo t = new TorneoRecreativo("Dobles", new EspecialidadIndividual(Disciplina.PADEL, Nivel.PRINCIPIANTE, true), 8,
+					INICIO, LIMITE, 15);
+			club.registrarTorneo(t);
 			Socio lucho = socio("lucho");
 			Socio juancho = socio("juancho");
-			t.inscribir(List.of(new JugadorClub(lucho), new JugadorClub(juancho)), false, HOY);
-			t.inscribir(List.of(new JugadorClub(socio("nico")), new JugadorClub(socio("pipe"))), false, HOY);
-			t.iniciar(INICIO);
+			club.inscribirEnTorneo(t, new ParejaTorneo(lucho, juancho), HOY);
+			club.inscribirEnTorneo(t, new ParejaTorneo(socio("nico"), socio("pipe")), HOY);
 
 			jugarTodo(t);
 
 			for (Socio ganador : List.of(lucho, juancho)) {
-				assertEquals(1, ganador.getBonos().size());
-				assertEquals(15, ganador.getBonos().get(0).getPorcentaje());
-				assertEquals("Dobles", ganador.getBonos().get(0).getTorneo());
+				List<Bono> bonos = club.bonosDisponibles(ganador);
+				assertEquals(1, bonos.size());
+				assertEquals(15, bonos.get(0).getPorcentaje());
+				assertEquals("Dobles", bonos.get(0).getOrigen());
 			}
 		}
 	}
 
 	@Nested
-	@DisplayName("CA-4 final de un competitivo ganada por un empleado")
+	@DisplayName("CA-4 competitivo ganado por un empleado")
 	class CompetitivoEmpleado {
 
 		@Test
 		@DisplayName("no se entrega premio en efectivo")
 		void sinPremio() throws ReglaNegocioException {
-			TorneoCompetitivo t = new TorneoCompetitivo("Abierto", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO,
-					50000);
+			TorneoCompetitivo t = new TorneoCompetitivo("Abierto", TENIS, 8, INICIO, LIMITE, 50000);
+			club.registrarTorneo(t);
 			Entrenador profe = new Entrenador("profe", "1", "Profe", "D1");
 			inscribir(t, profe, socio("juancho"), socio("nico"), socio("pipe"));
-			t.iniciar(INICIO);
 
 			jugarTodo(t);
 
-			Inscripcion campeon = t.getCampeon();
-			assertSame(profe, ((JugadorClub) campeon.getIntegrantes().get(0)).getUsuario());
+			assertSame(profe, ((JugadorTorneo) t.getGanador().getParticipante()).getJugador());
 			assertEquals(150000, t.totalRecaudado());
-			assertEquals(0, t.getPremioEntregado());
-			assertTrue(t.getEncuentrosPendientes().isEmpty());
+			assertTrue(t.getPremiosEntregados().isEmpty());
 		}
 	}
 }

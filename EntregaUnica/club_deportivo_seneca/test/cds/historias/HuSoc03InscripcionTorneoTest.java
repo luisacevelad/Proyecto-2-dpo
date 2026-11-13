@@ -18,8 +18,10 @@ import cds.ReglaNegocioException;
 import cds.academias.Academia;
 import cds.academias.Disciplina;
 import cds.academias.Nivel;
-import cds.torneos.Inscripcion;
-import cds.torneos.JugadorClub;
+import cds.torneos.EspecialidadIndividual;
+import cds.torneos.InscripcionTorneo;
+import cds.torneos.JugadorTorneo;
+import cds.torneos.ParejaTorneo;
 import cds.torneos.Torneo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Socio;
@@ -29,6 +31,7 @@ class HuSoc03InscripcionTorneoTest {
 
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
 	private static final LocalDate INICIO = LocalDate.of(2026, 11, 21);
+	private static final LocalDate LIMITE = INICIO.minusDays(3);
 
 	private Club club;
 	private Socio lucho;
@@ -54,13 +57,14 @@ class HuSoc03InscripcionTorneoTest {
 	}
 
 	private Torneo torneo(int cupos) throws ReglaNegocioException {
-		Torneo t = new TorneoRecreativo("Copa de tenis", Disciplina.TENIS, Nivel.INTERMEDIO, false, cupos, INICIO);
+		Torneo t = new TorneoRecreativo("Copa de tenis", new EspecialidadIndividual(Disciplina.TENIS, Nivel.INTERMEDIO, false),
+				cupos, INICIO, LIMITE, 15);
 		club.registrarTorneo(t);
 		return t;
 	}
 
-	private Inscripcion inscribir(Torneo t, Socio s, LocalDate fecha) throws ReglaNegocioException {
-		return club.inscribirEnTorneo(t, List.of(new JugadorClub(s)), fecha);
+	private InscripcionTorneo inscribir(Torneo t, Socio s, LocalDate fecha) throws ReglaNegocioException {
+		return club.inscribirEnTorneo(t, new JugadorTorneo(s), fecha);
 	}
 
 	@Nested
@@ -72,8 +76,8 @@ class HuSoc03InscripcionTorneoTest {
 		void ocupaPreferencial() throws ReglaNegocioException {
 			Torneo t = torneo(5);
 
-			assertTrue(inscribir(t, lucho, HOY).isCupoPreferencial());
-			assertFalse(inscribir(t, juancho, HOY).isCupoPreferencial());
+			assertTrue(inscribir(t, lucho, HOY).isPreferencial());
+			assertFalse(inscribir(t, juancho, HOY).isPreferencial());
 		}
 	}
 
@@ -82,7 +86,7 @@ class HuSoc03InscripcionTorneoTest {
 	class SoloPreferenciales {
 
 		@Test
-		@DisplayName("rechaza a un socio fuera del top si faltan mas de 3 dias")
+		@DisplayName("rechaza a un socio fuera del top antes de la fecha limite")
 		void rechazaFueraDelTop() throws ReglaNegocioException {
 			Torneo t = torneo(2);
 			inscribir(t, juancho, HOY);
@@ -92,15 +96,26 @@ class HuSoc03InscripcionTorneoTest {
 		}
 
 		@Test
-		@DisplayName("a 3 dias del inicio los cupos preferenciales se liberan")
-		void liberaPreferenciales() throws ReglaNegocioException {
+		@DisplayName("despues de la fecha limite los cupos preferenciales se liberan")
+		void liberaPorFecha() throws ReglaNegocioException {
 			Torneo t = torneo(2);
 			inscribir(t, juancho, HOY);
 
-			Inscripcion i = inscribir(t, nico, INICIO.minusDays(3));
+			inscribir(t, nico, LIMITE.plusDays(1));
 
 			assertEquals(2, t.getInscripciones().size());
-			assertTrue(i.isCupoPreferencial());
+		}
+
+		@Test
+		@DisplayName("el administrador puede liberarlos antes")
+		void liberaManual() throws ReglaNegocioException {
+			Torneo t = torneo(2);
+			inscribir(t, juancho, HOY);
+
+			t.liberarCuposPreferenciales();
+			inscribir(t, nico, HOY);
+
+			assertEquals(2, t.getInscripciones().size());
 		}
 
 		@Test
@@ -123,23 +138,24 @@ class HuSoc03InscripcionTorneoTest {
 			Torneo t = torneo(5);
 			inscribir(t, lucho, HOY);
 
-			t.retirar(new JugadorClub(lucho));
+			club.desinscribirDeTorneo(t, lucho, HOY);
 
 			assertTrue(t.getInscripciones().isEmpty());
-			assertEquals(1, t.preferencialesLibres());
+			assertEquals(1, t.cuposPreferencialesDisponibles(HOY));
 		}
 
 		@Test
 		@DisplayName("en dobles se retira la pareja completa")
 		void retiraPareja() throws ReglaNegocioException {
-			Torneo dobles = new TorneoRecreativo("Dobles", Disciplina.TENIS, Nivel.INTERMEDIO, true, 4, INICIO);
+			Torneo dobles = new TorneoRecreativo("Dobles", new EspecialidadIndividual(Disciplina.TENIS, Nivel.INTERMEDIO, true),
+					4, INICIO, LIMITE, 15);
 			club.registrarTorneo(dobles);
-			club.inscribirEnTorneo(dobles, List.of(new JugadorClub(juancho), new JugadorClub(nico)), HOY);
+			club.inscribirEnTorneo(dobles, new ParejaTorneo(juancho, nico), HOY);
 
-			dobles.retirar(new JugadorClub(nico));
+			club.desinscribirDeTorneo(dobles, nico, HOY);
 
 			assertTrue(dobles.getInscripciones().isEmpty());
-			assertEquals(3, dobles.regularesLibres());
+			assertEquals(4, dobles.cuposDisponibles());
 		}
 	}
 
@@ -155,7 +171,7 @@ class HuSoc03InscripcionTorneoTest {
 			inscribir(t, juancho, HOY);
 			t.iniciar(INICIO);
 
-			assertThrows(ReglaNegocioException.class, () -> t.retirar(new JugadorClub(lucho)));
+			assertThrows(ReglaNegocioException.class, () -> club.desinscribirDeTorneo(t, lucho, INICIO));
 			assertEquals(2, t.getInscripciones().size());
 		}
 	}

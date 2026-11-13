@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +20,15 @@ import cds.competencias.Liga;
 import cds.conjunto.CategoriaEdad;
 import cds.conjunto.DeporteConjunto;
 import cds.conjunto.Equipo;
-import cds.torneos.EquipoParticipante;
-import cds.torneos.Inscripcion;
-import cds.torneos.JugadorExterno;
+import cds.torneos.EquipoTorneo;
+import cds.torneos.EspecialidadConjunto;
+import cds.torneos.EspecialidadIndividual;
+import cds.torneos.InscripcionTorneo;
+import cds.torneos.JugadorTorneo;
 import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.torneos.TorneoRecreativo;
+import cds.usuarios.Estudiante;
 import cds.usuarios.Socio;
 
 @DisplayName("HU-ADM-05 Inscribir equipo o externo")
@@ -34,6 +36,7 @@ class HuAdm05InscribirTest {
 
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
 	private static final LocalDate INICIO = LocalDate.of(2026, 11, 21);
+	private static final LocalDate LIMITE = INICIO.minusDays(3);
 
 	private Club club;
 	private Liga liga;
@@ -60,7 +63,8 @@ class HuAdm05InscribirTest {
 	}
 
 	private Torneo copaFutbol(int cupos) throws ReglaNegocioException {
-		Torneo t = new TorneoRecreativo("Copa Sub-15", DeporteConjunto.FUTBOL, CategoriaEdad.SUB_15, cupos, INICIO);
+		Torneo t = new TorneoRecreativo("Copa Sub-15", new EspecialidadConjunto(DeporteConjunto.FUTBOL, CategoriaEdad.SUB_15),
+				cupos, INICIO, LIMITE, 15);
 		club.registrarTorneo(t);
 		return t;
 	}
@@ -76,11 +80,11 @@ class HuAdm05InscribirTest {
 			equipo("Coleros", CategoriaEdad.SUB_15, 15, 3);
 			Torneo copa = copaFutbol(5);
 
-			Inscripcion i = club.inscribirEnTorneo(copa, List.of(new EquipoParticipante(lideres)), HOY);
+			InscripcionTorneo i = club.inscribirEnTorneo(copa, new EquipoTorneo(lideres), HOY);
 
-			assertTrue(i.isCupoPreferencial());
-			assertEquals(0, copa.preferencialesLibres());
-			assertEquals(4, copa.regularesLibres());
+			assertTrue(i.isPreferencial());
+			assertEquals(0, copa.cuposPreferencialesDisponibles(HOY));
+			assertEquals(4, copa.cuposRegularesDisponibles(HOY));
 		}
 	}
 
@@ -94,8 +98,7 @@ class HuAdm05InscribirTest {
 			Equipo sub17 = equipo("Sub-17", CategoriaEdad.SUB_17, 16, 0);
 			Torneo copa = copaFutbol(5);
 
-			assertThrows(ReglaNegocioException.class,
-					() -> club.inscribirEnTorneo(copa, List.of(new EquipoParticipante(sub17)), HOY));
+			assertThrows(ReglaNegocioException.class, () -> club.inscribirEnTorneo(copa, new EquipoTorneo(sub17), HOY));
 			assertTrue(copa.getInscripciones().isEmpty());
 		}
 
@@ -106,28 +109,30 @@ class HuAdm05InscribirTest {
 			Equipo b = equipo("B", CategoriaEdad.SUB_15, 15, 6);
 			Equipo c = equipo("C", CategoriaEdad.SUB_15, 15, 3);
 			Torneo copa = copaFutbol(2);
-			club.inscribirEnTorneo(copa, List.of(new EquipoParticipante(a)), HOY);
-			club.inscribirEnTorneo(copa, List.of(new EquipoParticipante(b)), HOY);
+			club.inscribirEnTorneo(copa, new EquipoTorneo(a), HOY);
+			club.inscribirEnTorneo(copa, new EquipoTorneo(b), HOY);
 
-			assertThrows(ReglaNegocioException.class,() -> club.inscribirEnTorneo(copa, List.of(new EquipoParticipante(c)), HOY));
+			assertThrows(ReglaNegocioException.class, () -> club.inscribirEnTorneo(copa, new EquipoTorneo(c), HOY));
 			assertEquals(2, copa.getInscripciones().size());
 		}
 	}
 
 	@Nested
 	@DisplayName("CA-3 estudiante en torneo individual")
-	class Estudiante {
+	class EstudianteEnTorneo {
 
 		@Test
 		@DisplayName("queda registrado con la tarifa a cobrar")
 		void registraConTarifa() throws ReglaNegocioException {
-			Torneo abierto = new TorneoCompetitivo("Abierto", Disciplina.TENIS, Nivel.INTERMEDIO, false, 8, INICIO, 50000);
+			TorneoCompetitivo abierto = new TorneoCompetitivo("Abierto",
+					new EspecialidadIndividual(Disciplina.TENIS, Nivel.INTERMEDIO, false), 8, INICIO, LIMITE, 50000);
 			club.registrarTorneo(abierto);
+			Estudiante nico = new Estudiante("nico", "1", "Nico", "202412345");
 
-			Inscripcion i = club.inscribirEnTorneo(abierto,List.of(new JugadorExterno("Nico Estudiante", "CC-123", true)), HOY);
+			InscripcionTorneo i = club.inscribirEnTorneo(abierto, new JugadorTorneo(nico), HOY);
 
-			assertEquals(50000, i.getTarifa());
-			assertFalse(i.isCupoPreferencial());
+			assertEquals(50000, i.getMontoPagado());
+			assertFalse(i.isPreferencial());
 			assertEquals(50000, abierto.totalRecaudado());
 		}
 	}
