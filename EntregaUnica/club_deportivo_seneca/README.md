@@ -60,7 +60,7 @@ Todos los usuarios tienen password = login + `123` (ej: `julia` / `julia123`).
 | Torneo | Estado | Para probar |
 |---|---|---|
 | Copa Recreativa Tenis de Mesa | Inscripciones abiertas | Socio > Torneos > Inscribirme. Los 4 cupos regulares estan llenos y queda 1 preferencial: `laura` no puede entrar (cupo reservado al ranking); `felipe` (primero del ranking) si entra como preferencial |
-| Abierto Competitivo de Tenis | Inscripciones abiertas | Tarifa de $50.000; quedan 7 cupos. Probar inscribirse y salirse como socio (`laura`) o empleado (`max`) |
+| Abierto Competitivo de Tenis | Inscripciones abiertas | Empieza un miercoles, tarifa de $50.000 y quedan 5 cupos. Socio (`laura`): inscribirse paga $50.000 y puede salirse. Empleado `max` (sin turno los miercoles): se inscribe sin pagar. Empleado `leo` (turno todos los dias): se rechaza por turno |
 | Copa Competitiva de Futbol | Inscripciones abiertas | Torneo por equipos con Seneca Rojo y Seneca Azul inscritos (tarifa de $200.000 por equipo) |
 | Liga Recreativa de Tenis | En curso | Registrar los 2 resultados pendientes y finalizarla (Administrador > Torneos) |
 | Torneo Recreativo de Padel Dobles | Finalizado | Ver la tabla y el historial. Ganaron Carlos y Diana: cada uno tiene un bono del 15% (Tienda y cafeteria > comprar > usar bono) |
