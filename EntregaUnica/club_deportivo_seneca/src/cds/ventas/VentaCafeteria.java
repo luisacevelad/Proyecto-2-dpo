@@ -78,7 +78,7 @@ public class VentaCafeteria extends Venta {
 	}
 
 	public double impuesto() {
-		return subtotal() * IMPOCONSUMO;
+		return (subtotal() - descuentoBono()) * IMPOCONSUMO;
 	}
 
 	public double cargosAdicionales() {

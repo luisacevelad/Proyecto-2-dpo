@@ -51,7 +51,7 @@ public class VentaTienda extends Venta {
 	}
 
 	public double impuesto() {
-		return (subtotal() - descuento()) * IVA;
+		return (subtotal() - descuento() - descuentoBono()) * IVA;
 	}
 
 	public void descontarInventario(List<Inventario> inventarioTienda) throws ReglaNegocioException {

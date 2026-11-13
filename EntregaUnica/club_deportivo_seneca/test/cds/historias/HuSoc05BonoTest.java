@@ -49,7 +49,8 @@ class HuSoc05BonoTest {
 			venta.confirmar();
 
 			assertEquals(6000, venta.descuentoBono());
-			assertEquals(totalSinBono - 6000, venta.total(), 0.001);
+			assertEquals((40000 - 6000) * VentaTienda.IVA, venta.impuesto(), 0.001);
+			assertEquals(totalSinBono - 6000 * (1 + VentaTienda.IVA), venta.total(), 0.001);
 			assertTrue(bono.isUsado());
 		}
 	}

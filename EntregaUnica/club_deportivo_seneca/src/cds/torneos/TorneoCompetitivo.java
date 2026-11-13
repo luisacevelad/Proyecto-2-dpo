@@ -65,7 +65,7 @@ public class TorneoCompetitivo extends Torneo {
 
 	@Override
 	public String describirPremio() {
-		return "Premio en efectivo de $" + String.format("%,.0f", premioEfectivo()) + " (lo recaudado)";
+		return "Premio en efectivo de $" + String.format("%,.0f", premioEfectivo()) + " (70% de lo recaudado)";
 	}
 	
 	@Override
