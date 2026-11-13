@@ -29,9 +29,10 @@ import cds.torneos.Torneo;
 import cds.torneos.TorneoCompetitivo;
 import cds.torneos.TorneoRecreativo;
 import cds.usuarios.Estudiante;
+import cds.usuarios.Externo;
 import cds.usuarios.Socio;
 
-@DisplayName("HU-ADM-05 Inscribir equipo o externo")
+@DisplayName("HU-ADM-05 Registrar estudiante o externo (y HU-SOC-03 CA-5 y CA-6: inscribir equipos)")
 class HuAdm05InscribirTest {
 
 	private static final LocalDate HOY = LocalDate.of(2026, 11, 11);
@@ -70,7 +71,7 @@ class HuAdm05InscribirTest {
 	}
 
 	@Nested
-	@DisplayName("CA-1 equipo en el top de su liga")
+	@DisplayName("HU-SOC-03 CA-5 equipo en el top de su liga")
 	class EquipoTop {
 
 		@Test
@@ -89,7 +90,7 @@ class HuAdm05InscribirTest {
 	}
 
 	@Nested
-	@DisplayName("CA-2 equipo de otra categoria o torneo lleno")
+	@DisplayName("HU-SOC-03 CA-6 equipo de otra categoria o torneo lleno")
 	class EquipoRechazado {
 
 		@Test
@@ -118,7 +119,7 @@ class HuAdm05InscribirTest {
 	}
 
 	@Nested
-	@DisplayName("CA-3 estudiante en torneo individual")
+	@DisplayName("CA-1 estudiante registrado en un torneo competitivo")
 	class EstudianteEnTorneo {
 
 		@Test
@@ -134,6 +135,22 @@ class HuAdm05InscribirTest {
 			assertEquals(50000, i.getMontoPagado());
 			assertFalse(i.isPreferencial());
 			assertEquals(50000, abierto.totalRecaudado());
+		}
+	}
+
+	@Nested
+	@DisplayName("CA-2 login que ya existe")
+	class LoginRepetido {
+
+		@Test
+		@DisplayName("rechaza registrar a otro usuario con el mismo login")
+		void rechazaLogin() throws ReglaNegocioException {
+			club.registrarUsuario(new Estudiante("nico", "1", "Nico", "202412345"));
+			int usuarios = club.getUsuarios().size();
+
+			assertThrows(ReglaNegocioException.class,
+					() -> club.registrarUsuario(new Externo("nico", "2", "Nicolas Externo", "CC-999")));
+			assertEquals(usuarios, club.getUsuarios().size());
 		}
 	}
 }
